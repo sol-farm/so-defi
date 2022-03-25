@@ -169,7 +169,7 @@ pub fn format_orca_amm_name(name: &str, stable: bool, aquafarm: bool) -> String 
         }
         lp_name_parsed
     } else {
-        name.replace("-", "/")
+        name.replace('-', "/")
     };
     // scnSOL previously used to be labeled as SOCN
     // so handle that edgecase, todo(bonedaddy): test
@@ -212,7 +212,7 @@ mod test {
         let orca_config = OrcaConfigsApiResponse::fetch_orca_config().await.unwrap();
 
         let pool_config = orca_config
-            .find_pool(&"SOL/USDC".to_string(), false, false)
+            .find_pool("SOL/USDC", false, false)
             .unwrap();
         assert_eq!(
             pool_config.account,
@@ -220,7 +220,7 @@ mod test {
         );
 
         let pool_config = orca_config
-            .find_pool(&"SOL/USDC".to_string(), false, true)
+            .find_pool("SOL/USDC", false, true)
             .unwrap();
         assert_eq!(
             pool_config.account,
@@ -228,7 +228,7 @@ mod test {
         );
 
         let aquafarm_config = orca_config
-            .find_aquafarm(&"SOL/USDC".to_string(), false)
+            .find_aquafarm("SOL/USDC", false)
             .unwrap();
         assert_eq!(aquafarm_config.0, pool_config);
         println!(
@@ -237,10 +237,10 @@ mod test {
         );
 
         let pool_config = orca_config
-            .find_pool(&"LIQ/USDC".to_string(), false, true)
+            .find_pool("LIQ/USDC", false, true)
             .unwrap();
         let doubledip_config = orca_config
-            .find_double_dip(&"LIQ/USDC".to_string(), false)
+            .find_double_dip("LIQ/USDC", false)
             .unwrap();
         assert_eq!(doubledip_config.0, pool_config);
         println!(
