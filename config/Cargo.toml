@@ -1,0 +1,16 @@
+[package]
+name = "so-defi-config"
+version = "0.1.0"
+edition = "2021"
+authors = ["Tulip Protocol"]
+description = "configuration crate for so-defi"
+keywords = ["solana", "configuration", "orca", "raydium"]
+license = "MIT/Apache-2.0"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+thiserror = "1.0.25"
+anyhow = "1.0.41"
+reqwest = { version = "0.11", features = ["json", "blocking"] }
+tokio = { version = "1.8.0", features = ["rt-multi-thread", "macros"] }
+serde = { version = "1.0", features = ["derive"] }
