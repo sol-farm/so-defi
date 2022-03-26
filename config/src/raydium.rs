@@ -211,6 +211,7 @@ pub mod liquidity_list {
         pub timestamp: String,
         pub version: Version,
         pub official: Vec<LiquidityListEntry>,
+        pub un_official: Vec<LiquidityListEntry>,
     }
 
     #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -271,7 +272,7 @@ pub mod liquidity_list {
         async fn test_fetch_async() {
             let liquidity = fetch_async().await.unwrap();
             let mut ok = false;
-            for liquidity in liquidity.official.iter() {
+            for liquidity in liquidity.un_official.iter() {
                 if liquidity.id.eq(&"C614Uy93kGJrmuMRkPBUXtYu6E9MMRieKLcK3YUZGgxG") {
                     println!("found it {:#?}", liquidity);
                     ok = true;
