@@ -269,7 +269,16 @@ pub mod liquidity_list {
 
         #[tokio::test]
         async fn test_fetch_async() {
-            let _ = fetch_async().await.unwrap();
+            let liquidity = fetch_async().await.unwrap();
+            let mut ok = false;
+            for liquidity in liquidity.official.iter() {
+                if liquidity.id.eq(&"C614Uy93kGJrmuMRkPBUXtYu6E9MMRieKLcK3YUZGgxG") {
+                    println!("found it {:#?}", liquidity);
+                    ok = true;
+                    break;
+                }
+            }
+            assert_eq!(ok, true);
         }
         #[test]
         fn test_fetch() {
