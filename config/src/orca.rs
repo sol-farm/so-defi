@@ -211,37 +211,27 @@ mod test {
     async fn test_orca_config() {
         let orca_config = OrcaConfigsApiResponse::fetch_orca_config().await.unwrap();
 
-        let pool_config = orca_config
-            .find_pool("SOL/USDC", false, false)
-            .unwrap();
+        let pool_config = orca_config.find_pool("SOL/USDC", false, false).unwrap();
         assert_eq!(
             pool_config.account,
             "6fTRDD7sYxCN7oyoSQaN1AWC3P2m8A6gVZzGrpej9DvL".to_string()
         );
 
-        let pool_config = orca_config
-            .find_pool("SOL/USDC", false, true)
-            .unwrap();
+        let pool_config = orca_config.find_pool("SOL/USDC", false, true).unwrap();
         assert_eq!(
             pool_config.account,
             "EGZ7tiLeH62TPV1gL8WwbXGzEPa9zmcpVnnkPKKnrE2U".to_string()
         );
 
-        let aquafarm_config = orca_config
-            .find_aquafarm("SOL/USDC", false)
-            .unwrap();
+        let aquafarm_config = orca_config.find_aquafarm("SOL/USDC", false).unwrap();
         assert_eq!(aquafarm_config.0, pool_config);
         println!(
             "sol/usdc aquafarm information\npool {:#?}\nfarm {:#?}",
             aquafarm_config.0, aquafarm_config.1
         );
 
-        let pool_config = orca_config
-            .find_pool("LIQ/USDC", false, true)
-            .unwrap();
-        let doubledip_config = orca_config
-            .find_double_dip("LIQ/USDC", false)
-            .unwrap();
+        let pool_config = orca_config.find_pool("LIQ/USDC", false, true).unwrap();
+        let doubledip_config = orca_config.find_double_dip("LIQ/USDC", false).unwrap();
         assert_eq!(doubledip_config.0, pool_config);
         println!(
             "liq/usdc doubledip information\npool {:#?}\nfarm {:#?}\ndouble dip {:#?}",

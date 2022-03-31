@@ -2,9 +2,21 @@
 
 A set of rust crates for working with DeFi protocols across the Solana ecosystem.
 
+# Supported Protocols
+
+* Orca
+* Raydium
+* Atrix
+
 # Crates
 
 ## `so-defi-config`
+
+Configuration parsing create that supports parsing the output from the various API's offered by the following protocols:
+
+* Orca
+* Raydium
+* Atrix
 
 Provides helpers for parsing the configuration api's available from Orca, and Raydium.
 

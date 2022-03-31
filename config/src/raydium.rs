@@ -1,6 +1,6 @@
 //! provides helepr functions for parsing raydium's configuration api
 
-use anyhow::{Result};
+use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -273,7 +273,10 @@ pub mod liquidity_list {
             let liquidity = fetch_async().await.unwrap();
             let mut ok = false;
             for liquidity in liquidity.un_official.iter() {
-                if liquidity.id.eq(&"C614Uy93kGJrmuMRkPBUXtYu6E9MMRieKLcK3YUZGgxG") {
+                if liquidity
+                    .id
+                    .eq(&"C614Uy93kGJrmuMRkPBUXtYu6E9MMRieKLcK3YUZGgxG")
+                {
                     println!("found it {:#?}", liquidity);
                     ok = true;
                     break;
