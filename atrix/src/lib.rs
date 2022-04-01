@@ -21,6 +21,8 @@ pub mod addresses {
     pub const CROP_SEED: &[u8; 15] = b"atrix-farm-crop";
     pub const FARM_STAKE_SEED: &[u8; 16] = b"atrix-farm-stake";
     pub const FARM_HARVESTER_SEED: &[u8; 20] = b"atrix-farm-harvester";
+    pub const POOL_LP_MINT_SEED: &[u8; 18] = b"atrix-pool-lp-mint";
+    pub const OPEN_ORDERS_V2_SEED: &[u8; 20] = b"atrix-open-orders-v2";
 
     pub fn find_farm_address(
         base: Pubkey,

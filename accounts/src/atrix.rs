@@ -148,7 +148,7 @@ pub mod pool {
     mod test {
         use crate::atrix::pool::PoolAccount;
 
-        use super::farm::*;
+        use super::{farm::*, ProtocolAccount};
         use borsh::BorshDeserialize;
         use static_pubkey::static_pubkey;
         use solana_program::{self, system_program};
@@ -160,6 +160,14 @@ pub mod pool {
             let farm_account_data = rpc.get_account_data(&test_key).unwrap();
             let pool_account = PoolAccount::deserialize(&mut &farm_account_data[..]).unwrap();
             assert_eq!(pool_account.coin_mint.to_string(), "smbdJcLBrtKPhjrWCpDv5ABdJwz2vYo3mm6ojmePL3t".to_string());
+        }
+        #[test]
+        fn test_load_protocol_account() {
+            let test_key = static_pubkey!("3uTzTX5GBSfbW7eM9R9k95H7Txe32Qw3Z25MtyD2dzwC");
+            let rpc = rpc_client::RpcClient::new("https://ssc-dao.genesysgo.net".to_string());
+            let farm_account_data = rpc.get_account_data(&test_key).unwrap();
+            let protocol_account = ProtocolAccount::deserialize(&mut &farm_account_data[..]).unwrap();
+            println!("{:#?}", protocol_account);
         }
     }
 }
