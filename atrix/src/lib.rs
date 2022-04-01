@@ -100,3 +100,96 @@ pub mod addresses {
         }
     }
 }
+
+pub mod instructions {
+    use super::*;
+    use addresses;
+    use solana_program::{instruction::{Instruction, AccountMeta}, system_program, sysvar};
+
+    /// instruction sighash used by the create_staker instruction
+    pub const CREATE_STAKER_SIGHASH: [u8; 8] = [14, 28, 165, 74, 243, 144, 108, 177];
+    /// instruction sighash used by the stake instruction
+    pub const STAKE_SIGHASH: [u8; 8] = [206, 176, 202, 18, 200, 209, 179, 108];
+
+    pub fn new_create_staker_account_ix(
+        farm_key: Pubkey,
+        authority: Pubkey,
+        staker_account: Pubkey,
+        staker_account_bump: u8,
+    ) -> Instruction {
+        let mut data = CREATE_STAKER_SIGHASH.to_vec();
+        data.push(staker_account_bump);
+        Instruction {
+            program_id: addresses::PROGRAM_ID,
+            accounts: vec![
+                AccountMeta::new_readonly(farm_key, false),
+                AccountMeta::new(staker_account, false),
+                AccountMeta::new_readonly(authority, false),
+                AccountMeta::new_readonly(authority, false),
+                AccountMeta::new_readonly(system_program::id(), false),
+                AccountMeta::new_readonly(sysvar::rent::id(), false),
+            ],
+            data,
+        }
+    }
+    pub fn new_stake_ix(
+        farm_account: Pubkey,
+        staker_account: Pubkey,
+        farm_stake_token_account: Pubkey,
+        crop_account: Pubkey,
+        crop_reward_token_account: Pubkey,
+        harvester_account: Pubkey,
+        user_reward_token_account: Pubkey,
+        user_stake_account_account: Pubkey,
+        authority: Pubkey,
+        amount: u64,
+    ) -> Instruction {
+        let mut data = STAKE_SIGHASH.to_vec();
+        data.extend_from_slice(&amount.to_le_bytes()[..]);
+        Instruction {
+            program_id: addresses::PROGRAM_ID,
+            accounts: vec![
+                AccountMeta::new_readonly(farm_account, false),
+                AccountMeta::new(staker_account, false),
+                AccountMeta::new(farm_stake_token_account, false),
+                AccountMeta::new(crop_account, false),
+                AccountMeta::new(crop_reward_token_account, false),
+                AccountMeta::new(harvester_account, false),
+                AccountMeta::new(user_reward_token_account, false),
+                AccountMeta::new(user_stake_account_account, false),
+                AccountMeta::new_readonly(authority, true),
+                AccountMeta::new_readonly(spl_token::id(), false),
+                AccountMeta::new_readonly(sysvar::clock::id(), false),
+            ],
+            data,
+        }
+    }
+    // todo https://github.com/skaiba0/atrix-farm/blob/aa7b1a916474f17ebe785eb23d677c0df475174e/farmSdk/idl/farm.json#L421
+    pub fn new_stake_dual_crop_ix() { unreachable!() }
+    #[cfg(test)]
+    mod test {
+        use super::*;
+        use ring::digest::{Context, SHA256};
+        #[test]
+        fn test_sighashes() {
+            {
+                let mut context = Context::new(&SHA256);
+                context.update(b"global:create_staker");
+                let digest = context.finish();
+                println!(
+                    "pub const CREATE_STAKER_SIGHASH: [u8; 8] = {:?};",
+                    &digest.as_ref()[0..8]
+                );
+            }
+            {
+                let mut context = Context::new(&SHA256);
+                context.update(b"global:stake");
+                let digest = context.finish();
+                println!(
+                    "pub const STAKE_SIGHASH: [u8; 8] = {:?};",
+                    &digest.as_ref()[0..8]
+                );
+            }
+        }
+    }
+}

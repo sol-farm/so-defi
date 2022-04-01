@@ -612,6 +612,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "data-encoding"
+version = "2.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3ee2393c4a91429dffb4bedf19f4d6abf27d8a732c8ce4980305d782e5426d57"
+
+[[package]]
 name = "der"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2514,9 +2520,12 @@ version = "0.1.0"
 dependencies = [
  "borsh",
  "borsh-derive",
+ "data-encoding",
+ "ring",
  "so-defi-accounts",
  "solana-client",
  "solana-program",
+ "spl-token",
  "static-pubkey",
 ]
 
