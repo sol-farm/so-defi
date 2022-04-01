@@ -1,0 +1,19 @@
+[package]
+name = "so-defi-atrix"
+version = "0.1.0"
+edition = "2021"
+authors = ["Tulip Protocol"]
+description = "atrix protocol instructions, helpers, etc.."
+keywords = ["solana", "configuration", "defi", "tulip-protocol"]
+license = "MIT/Apache-2.0"
+readme = "../README.md"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+solana-program = "1.9"
+borsh-derive = "0.9.1"
+borsh = "0.9.1"
+static-pubkey = "1.0.2"
+so-defi-accounts = {path = "../accounts", version = "0.1.0"}
+[dev-dependencies]
+solana-client = "1.9"

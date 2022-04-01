@@ -17,6 +17,7 @@ pub struct FarmAccount {
 #[derive(Debug, Default, Clone, BorshDeserialize, BorshSerialize)]
 pub struct CropAccount {
     _buffer: [u8; 8],
+    pub bump: u8,
     pub authority: Pubkey,
     pub farm_account: Pubkey,
     pub reward_mint: Pubkey,
@@ -64,6 +65,7 @@ mod test {
         for crop_account in farm_account.crop_accounts.iter() {
             if let Some(crop_account) = crop_account {
                 let crop_account_data = rpc.get_account_data(crop_account).unwrap();
+                println!("crop_address {}", crop_account);
                 let crop_account = CropAccount::deserialize(&mut &crop_account_data[..]).unwrap();
                 println!("crop_account {:#?}", crop_account);
             }

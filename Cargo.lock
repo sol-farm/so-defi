@@ -2509,6 +2509,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "so-defi-atrix"
+version = "0.1.0"
+dependencies = [
+ "borsh",
+ "borsh-derive",
+ "so-defi-accounts",
+ "solana-client",
+ "solana-program",
+ "static-pubkey",
+]
+
+[[package]]
 name = "so-defi-config"
 version = "0.1.2"
 dependencies = [
