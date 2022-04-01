@@ -14,7 +14,9 @@ pub mod addresses {
     use super::*;
 
     /// atrix farm program address
-    pub const PROGRAM_ID: Pubkey = static_pubkey!("BLDDrex4ZSWBgPYaaH6CQCzkJXWfzCiiur9cSFJT8t3x");
+    pub const FARM_PROGRAM_ID: Pubkey = static_pubkey!("BLDDrex4ZSWBgPYaaH6CQCzkJXWfzCiiur9cSFJT8t3x");
+    /// atrix pool program
+    pub const POOL_PROGRAM_ID: Pubkey = static_pubkey!("HvwYjjzPbXWpykgVZhqvvfeeaSraQVnTiQibofaFw9M7");
     pub const FARM_SEED: &[u8; 10] = b"atrix-farm";
     pub const CROP_SEED: &[u8; 15] = b"atrix-farm-crop";
     pub const FARM_STAKE_SEED: &[u8; 16] = b"atrix-farm-stake";
@@ -28,7 +30,7 @@ pub mod addresses {
                 FARM_SEED,
                 base.as_ref(),
             ],
-            &PROGRAM_ID,
+            &FARM_PROGRAM_ID,
         )
     }
 
@@ -41,7 +43,7 @@ pub mod addresses {
                 CROP_SEED, 
                 farm_key.as_ref(), 
                 reward_mint.as_ref(),
-                ], &PROGRAM_ID,
+                ], &FARM_PROGRAM_ID,
         )
     }
 
@@ -54,7 +56,7 @@ pub mod addresses {
                 FARM_STAKE_SEED,
                 authority.as_ref(),
                 farm_key.as_ref(),
-            ], &PROGRAM_ID,
+            ], &FARM_PROGRAM_ID,
         )
     }
 
@@ -68,7 +70,7 @@ pub mod addresses {
                 authority.as_ref(),
                 crop_key.as_ref(),
             ],
-            &PROGRAM_ID,
+            &FARM_PROGRAM_ID,
         )
     }
 
@@ -137,7 +139,7 @@ pub mod instructions {
         let mut data = CREATE_STAKER_SIGHASH.to_vec();
         data.push(staker_account_bump);
         Instruction {
-            program_id: addresses::PROGRAM_ID,
+            program_id: addresses::FARM_PROGRAM_ID,
             accounts: vec![
                 AccountMeta::new_readonly(farm_key, false),
                 AccountMeta::new(staker_account, false),
@@ -164,7 +166,7 @@ pub mod instructions {
         let mut data = STAKE_SIGHASH.to_vec();
         data.extend_from_slice(&amount.to_le_bytes()[..]);
         Instruction {
-            program_id: addresses::PROGRAM_ID,
+            program_id: addresses::FARM_PROGRAM_ID,
             accounts: vec![
                 AccountMeta::new_readonly(farm_account, false),
                 AccountMeta::new(staker_account, false),
@@ -200,7 +202,7 @@ pub mod instructions {
         let mut data = STAKE_DUAL_CROP_SIGHASH.to_vec();
         data.extend_from_slice(&amount.to_le_bytes()[..]);
         Instruction {
-            program_id: addresses::PROGRAM_ID,
+            program_id: addresses::FARM_PROGRAM_ID,
             accounts: vec![
                 AccountMeta::new_readonly(farm_account, false),
                 AccountMeta::new(farm_stake_token_account, false),
@@ -236,7 +238,7 @@ pub mod instructions {
         let mut data = UNSTAKE_SIGHASH.to_vec();
         data.extend_from_slice(&amount.to_le_bytes()[..]);
         Instruction {
-            program_id: addresses::PROGRAM_ID,
+            program_id: addresses::FARM_PROGRAM_ID,
             accounts: vec![
                 AccountMeta::new_readonly(farm_account, false),
                 AccountMeta::new(staker_account, false),
@@ -272,7 +274,7 @@ pub mod instructions {
         let mut data = UNSTAKE_DUAL_CROP_SIGHASH.to_vec();
         data.extend_from_slice(&amount.to_le_bytes()[..]);
         Instruction {
-            program_id: addresses::PROGRAM_ID,
+            program_id: addresses::FARM_PROGRAM_ID,
             accounts: vec![
                 AccountMeta::new_readonly(farm_account, false),
                 AccountMeta::new(farm_stake_token_account, false),
@@ -306,7 +308,7 @@ pub mod instructions {
     ) -> Instruction {
         let data = CLAIM_SIGHASH.to_vec();
         Instruction {
-            program_id: addresses::PROGRAM_ID,
+            program_id: addresses::FARM_PROGRAM_ID,
             accounts: vec![
                 AccountMeta::new_readonly(farm_account, false),
                 AccountMeta::new(staker_account, false),
@@ -340,7 +342,7 @@ pub mod instructions {
     ) -> Instruction { 
         let data = CLAIM_DUAL_CROP_SIGHASH.to_vec();
         Instruction {
-            program_id: addresses::PROGRAM_ID,
+            program_id: addresses::FARM_PROGRAM_ID,
             accounts: vec![
                 AccountMeta::new_readonly(farm_account, false),
                 AccountMeta::new(farm_stake_token_account, false),
