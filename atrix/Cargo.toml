@@ -1,9 +1,9 @@
 [package]
-name = "so-defi-accounts"
+name = "so-defi-atrix"
 version = "0.1.4"
 edition = "2021"
 authors = ["Tulip Protocol"]
-description = "accounts types for solana defi protocols"
+description = "atrix protocol instructions, helpers, etc.."
 keywords = ["solana", "configuration", "defi", "tulip-protocol"]
 license = "MIT/Apache-2.0"
 readme = "../README.md"
@@ -14,5 +14,10 @@ solana-program = "1.9"
 borsh-derive = "0.9.1"
 borsh = "0.9.1"
 static-pubkey = "1.0.2"
+so-defi-accounts = {path = "../accounts", version = "0.1.4"}
+spl-token = "3.2.0"
+sighashdb = "0.1.0"
 [dev-dependencies]
 solana-client = "1.9"
+data-encoding = "2.3.2"
+ring = "0.16.20"

@@ -612,6 +612,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "data-encoding"
+version = "2.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3ee2393c4a91429dffb4bedf19f4d6abf27d8a732c8ce4980305d782e5426d57"
+
+[[package]]
 name = "der"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2461,6 +2467,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "sighashdb"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c572078a11487ff0b637690c3ddba3683cab96791bb516f67bcb4f8da049de52"
+dependencies = [
+ "lazy_static",
+]
+
+[[package]]
 name = "signal-hook-registry"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2499,7 +2514,7 @@ checksum = "f2dd574626839106c320a323308629dcb1acfc96e32a8cba364ddc61ac23ee83"
 
 [[package]]
 name = "so-defi-accounts"
-version = "0.1.0"
+version = "0.1.4"
 dependencies = [
  "borsh",
  "borsh-derive",
@@ -2509,8 +2524,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "so-defi-atrix"
+version = "0.1.4"
+dependencies = [
+ "borsh",
+ "borsh-derive",
+ "data-encoding",
+ "ring",
+ "sighashdb",
+ "so-defi-accounts",
+ "solana-client",
+ "solana-program",
+ "spl-token",
+ "static-pubkey",
+]
+
+[[package]]
 name = "so-defi-config"
-version = "0.1.2"
+version = "0.1.4"
 dependencies = [
  "anyhow",
  "reqwest",
