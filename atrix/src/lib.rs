@@ -2,10 +2,18 @@ use solana_program;
 use solana_program::pubkey::Pubkey;
 use static_pubkey::static_pubkey;
 
+pub mod prelude {
+    pub use super::addresses;
+    pub use super::instructions;
+    pub use solana_program;
+    pub use static_pubkey::static_pubkey;
+}
+
 
 pub mod addresses {
     use super::*;
 
+    /// atrix farm program address
     pub const PROGRAM_ID: Pubkey = static_pubkey!("BLDDrex4ZSWBgPYaaH6CQCzkJXWfzCiiur9cSFJT8t3x");
     pub const FARM_SEED: &[u8; 10] = b"atrix-farm";
     pub const CROP_SEED: &[u8; 15] = b"atrix-farm-crop";
@@ -116,7 +124,10 @@ pub mod instructions {
     pub const UNSTAKE_SIGHASH: [u8; 8] = [90, 95, 107, 42, 205, 124, 50, 225];
     /// instruction sighash used by the unstake_dual_crop instruction
     pub const UNSTAKE_DUAL_CROP_SIGHASH: [u8; 8] = [125, 31, 2, 239, 223, 165, 240, 249];
-
+    /// instruction sighash used by the claim instruction
+    pub const CLAIM_SIGHASH: [u8; 8] = [62, 198, 214, 193, 213, 159, 108, 210];
+    /// instruction sighash used by the claim_dual_crop instruction
+    pub const CLAIM_DUAL_CROP_SIGHASH: [u8; 8] = [128, 32, 146, 208, 138, 252, 110, 71];
     pub fn new_create_staker_account_ix(
         farm_key: Pubkey,
         authority: Pubkey,
@@ -282,6 +293,74 @@ pub mod instructions {
             data,
         }
     }
+    pub fn new_claim_ix(
+        farm_account: Pubkey,
+        staker_account: Pubkey,
+        farm_stake_token_account: Pubkey,
+        crop_account: Pubkey,
+        crop_reward_token_account: Pubkey,
+        harvester_account: Pubkey,
+        user_reward_token_account: Pubkey,
+        user_stake_token_account: Pubkey,
+        authority: Pubkey,
+    ) -> Instruction {
+        let data = CLAIM_SIGHASH.to_vec();
+        Instruction {
+            program_id: addresses::PROGRAM_ID,
+            accounts: vec![
+                AccountMeta::new_readonly(farm_account, false),
+                AccountMeta::new(staker_account, false),
+                AccountMeta::new(farm_stake_token_account, false),
+                AccountMeta::new(crop_account, false),
+                AccountMeta::new(crop_reward_token_account, false),
+                AccountMeta::new(harvester_account, false),
+                AccountMeta::new(user_reward_token_account, false),
+                AccountMeta::new(user_stake_token_account, false),
+                AccountMeta::new_readonly(authority, false),
+                AccountMeta::new_readonly(spl_token::id(), false),
+                AccountMeta::new_readonly(sysvar::clock::id(), false),
+            ],
+            data,
+        }
+    }
+    pub fn new_claim_dual_crop_ix(
+        farm_account: Pubkey,
+        farm_stake_token_account: Pubkey,
+        staker_account: Pubkey,
+        crop_1_crop_account: Pubkey,
+        crop_1_crop_reward_token_account: Pubkey,
+        crop_1_harvester_account: Pubkey,
+        crop_1_user_reward_token_account: Pubkey,
+        crop_2_crop_account: Pubkey,
+        crop_2_crop_reward_token_account: Pubkey,
+        crop_2_harvester_account: Pubkey,
+        crop_2_user_reward_token_account: Pubkey,
+        user_stake_token_account: Pubkey,
+        authority: Pubkey,
+    ) -> Instruction { 
+        let data = CLAIM_DUAL_CROP_SIGHASH.to_vec();
+        Instruction {
+            program_id: addresses::PROGRAM_ID,
+            accounts: vec![
+                AccountMeta::new_readonly(farm_account, false),
+                AccountMeta::new(farm_stake_token_account, false),
+                AccountMeta::new(staker_account, false),
+                AccountMeta::new(crop_1_crop_account, false),
+                AccountMeta::new(crop_1_crop_reward_token_account, false),
+                AccountMeta::new(crop_1_harvester_account, false),
+                AccountMeta::new(crop_1_user_reward_token_account, false),
+                AccountMeta::new(crop_2_crop_account, false),
+                AccountMeta::new(crop_2_crop_reward_token_account, false),
+                AccountMeta::new(crop_2_harvester_account, false),
+                AccountMeta::new(crop_2_user_reward_token_account, false),
+                AccountMeta::new(user_stake_token_account, false),
+                AccountMeta::new_readonly(authority, true),
+                AccountMeta::new_readonly(spl_token::id(), false),
+                AccountMeta::new_readonly(sysvar::clock::id(), false),
+            ],
+            data,
+        }
+    }
     #[cfg(test)]
     mod test {
         use super::*;
@@ -330,6 +409,24 @@ pub mod instructions {
                 let digest = context.finish();
                 println!(
                     "pub const UNSTAKE_DUAL_CROP_SIGHASH: [u8; 8] = {:?};",
+                    &digest.as_ref()[0..8]
+                );
+            }
+            {
+                let mut context = Context::new(&SHA256);
+                context.update(b"global:claim");
+                let digest = context.finish();
+                println!(
+                    "pub const CLAIM_SIGHASH: [u8; 8] = {:?};",
+                    &digest.as_ref()[0..8]
+                );
+            }
+            {
+                let mut context = Context::new(&SHA256);
+                context.update(b"global:claim_dual_crop");
+                let digest = context.finish();
+                println!(
+                    "pub const CLAIM_DUAL_CROP_SIGHASH: [u8; 8] = {:?};",
                     &digest.as_ref()[0..8]
                 );
             }
