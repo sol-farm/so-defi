@@ -110,6 +110,12 @@ pub mod instructions {
     pub const CREATE_STAKER_SIGHASH: [u8; 8] = [14, 28, 165, 74, 243, 144, 108, 177];
     /// instruction sighash used by the stake instruction
     pub const STAKE_SIGHASH: [u8; 8] = [206, 176, 202, 18, 200, 209, 179, 108];
+    /// instruction sighash used by the stake_dual_crop instruction
+    pub const STAKE_DUAL_CROP_SIGHASH: [u8; 8] = [241, 42, 177, 56, 14, 203, 117, 253];
+    /// instruction sighash used by the unstake instruction
+    pub const UNSTAKE_SIGHASH: [u8; 8] = [90, 95, 107, 42, 205, 124, 50, 225];
+    /// instruction sighash used by the unstake_dual_crop instruction
+    pub const UNSTAKE_DUAL_CROP_SIGHASH: [u8; 8] = [125, 31, 2, 239, 223, 165, 240, 249];
 
     pub fn new_create_staker_account_ix(
         farm_key: Pubkey,
@@ -164,8 +170,118 @@ pub mod instructions {
             data,
         }
     }
-    // todo https://github.com/skaiba0/atrix-farm/blob/aa7b1a916474f17ebe785eb23d677c0df475174e/farmSdk/idl/farm.json#L421
-    pub fn new_stake_dual_crop_ix() { unreachable!() }
+    pub fn new_stake_dual_crop_ix(
+        farm_account: Pubkey,
+        farm_stake_token_account: Pubkey,
+        staker_account: Pubkey,
+        crop_1_crop_account: Pubkey,
+        crop_1_crop_reward_token_account: Pubkey,
+        crop_1_harvester_account: Pubkey,
+        crop_1_user_reward_token_account: Pubkey,
+        crop_2_crop_account: Pubkey,
+        crop_2_crop_reward_token_account: Pubkey,
+        crop_2_harvester_account: Pubkey,
+        crop_2_user_reward_token_account: Pubkey,
+        user_stake_token_account: Pubkey,
+        authority: Pubkey,
+        amount: u64,
+    ) -> Instruction { 
+        let mut data = STAKE_DUAL_CROP_SIGHASH.to_vec();
+        data.extend_from_slice(&amount.to_le_bytes()[..]);
+        Instruction {
+            program_id: addresses::PROGRAM_ID,
+            accounts: vec![
+                AccountMeta::new_readonly(farm_account, false),
+                AccountMeta::new(farm_stake_token_account, false),
+                AccountMeta::new(staker_account, false),
+                AccountMeta::new(crop_1_crop_account, false),
+                AccountMeta::new(crop_1_crop_reward_token_account, false),
+                AccountMeta::new(crop_1_harvester_account, false),
+                AccountMeta::new(crop_1_user_reward_token_account, false),
+                AccountMeta::new(crop_2_crop_account, false),
+                AccountMeta::new(crop_2_crop_reward_token_account, false),
+                AccountMeta::new(crop_2_harvester_account, false),
+                AccountMeta::new(crop_2_user_reward_token_account, false),
+                AccountMeta::new(user_stake_token_account, false),
+                AccountMeta::new_readonly(authority, true),
+                AccountMeta::new_readonly(spl_token::id(), false),
+                AccountMeta::new_readonly(sysvar::clock::id(), false),
+            ],
+            data,
+        }
+    }
+    pub fn new_unstake_ix(
+        farm_account: Pubkey,
+        staker_account: Pubkey,
+        farm_stake_token_account: Pubkey,
+        crop_account: Pubkey,
+        crop_reward_token_account: Pubkey,
+        harvester_account: Pubkey,
+        user_reward_token_account: Pubkey,
+        user_stake_account_account: Pubkey,
+        authority: Pubkey,
+        amount: u64,
+    ) -> Instruction {
+        let mut data = UNSTAKE_SIGHASH.to_vec();
+        data.extend_from_slice(&amount.to_le_bytes()[..]);
+        Instruction {
+            program_id: addresses::PROGRAM_ID,
+            accounts: vec![
+                AccountMeta::new_readonly(farm_account, false),
+                AccountMeta::new(staker_account, false),
+                AccountMeta::new(farm_stake_token_account, false),
+                AccountMeta::new(crop_account, false),
+                AccountMeta::new(crop_reward_token_account, false),
+                AccountMeta::new(harvester_account, false),
+                AccountMeta::new(user_reward_token_account, false),
+                AccountMeta::new(user_stake_account_account, false),
+                AccountMeta::new_readonly(authority, true),
+                AccountMeta::new_readonly(spl_token::id(), false),
+                AccountMeta::new_readonly(sysvar::clock::id(), false),
+            ],
+            data,
+        }
+    }
+    pub fn new_unstake_dual_crop_ix(
+        farm_account: Pubkey,
+        farm_stake_token_account: Pubkey,
+        staker_account: Pubkey,
+        crop_1_crop_account: Pubkey,
+        crop_1_crop_reward_token_account: Pubkey,
+        crop_1_harvester_account: Pubkey,
+        crop_1_user_reward_token_account: Pubkey,
+        crop_2_crop_account: Pubkey,
+        crop_2_crop_reward_token_account: Pubkey,
+        crop_2_harvester_account: Pubkey,
+        crop_2_user_reward_token_account: Pubkey,
+        user_stake_token_account: Pubkey,
+        authority: Pubkey,
+        amount: u64,
+    ) -> Instruction { 
+        let mut data = UNSTAKE_DUAL_CROP_SIGHASH.to_vec();
+        data.extend_from_slice(&amount.to_le_bytes()[..]);
+        Instruction {
+            program_id: addresses::PROGRAM_ID,
+            accounts: vec![
+                AccountMeta::new_readonly(farm_account, false),
+                AccountMeta::new(farm_stake_token_account, false),
+                AccountMeta::new(staker_account, false),
+                AccountMeta::new(crop_1_crop_account, false),
+                AccountMeta::new(crop_1_crop_reward_token_account, false),
+                AccountMeta::new(crop_1_harvester_account, false),
+                AccountMeta::new(crop_1_user_reward_token_account, false),
+                AccountMeta::new(crop_2_crop_account, false),
+                AccountMeta::new(crop_2_crop_reward_token_account, false),
+                AccountMeta::new(crop_2_harvester_account, false),
+                AccountMeta::new(crop_2_user_reward_token_account, false),
+                AccountMeta::new(user_stake_token_account, false),
+                AccountMeta::new_readonly(authority, true),
+                AccountMeta::new_readonly(spl_token::id(), false),
+                AccountMeta::new_readonly(sysvar::clock::id(), false),
+            ],
+            data,
+        }
+    }
     #[cfg(test)]
     mod test {
         use super::*;
@@ -187,6 +303,33 @@ pub mod instructions {
                 let digest = context.finish();
                 println!(
                     "pub const STAKE_SIGHASH: [u8; 8] = {:?};",
+                    &digest.as_ref()[0..8]
+                );
+            }
+            {
+                let mut context = Context::new(&SHA256);
+                context.update(b"global:stake_dual_crop");
+                let digest = context.finish();
+                println!(
+                    "pub const STAKE_DUAL_CROP_SIGHASH: [u8; 8] = {:?};",
+                    &digest.as_ref()[0..8]
+                );
+            }
+            {
+                let mut context = Context::new(&SHA256);
+                context.update(b"global:unstake");
+                let digest = context.finish();
+                println!(
+                    "pub const UNSTAKE_SIGHASH: [u8; 8] = {:?};",
+                    &digest.as_ref()[0..8]
+                );
+            }
+            {
+                let mut context = Context::new(&SHA256);
+                context.update(b"global:unstake_dual_crop");
+                let digest = context.finish();
+                println!(
+                    "pub const UNSTAKE_DUAL_CROP_SIGHASH: [u8; 8] = {:?};",
                     &digest.as_ref()[0..8]
                 );
             }
