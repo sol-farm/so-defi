@@ -172,7 +172,7 @@ pub mod pools_list {
         async fn test_fetch_async() {
             let result = fetch_async().await.unwrap();
             assert!(result.pools.len() > 0);
-            println!("pool {:#?}", result.pools[result.pools.len()-1]);
+            println!("pool {:#?}", result.pools[result.pools.len() - 1]);
         }
         #[test]
         fn test_fetch() {

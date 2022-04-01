@@ -1,7 +1,7 @@
 //! atrix account definitions taken from https://github.com/skaiba0/atrix-farm/blob/main/farmSdk/idl/farm.json
 
-use solana_program::{self, pubkey::Pubkey};
 use borsh_derive::{BorshDeserialize, BorshSerialize};
+use solana_program::{self, pubkey::Pubkey};
 
 pub mod farm {
     use super::*;
@@ -15,7 +15,7 @@ pub mod farm {
         pub crop_accounts: [Option<Pubkey>; 4],
         pub authority: Pubkey,
     }
-    
+
     #[derive(Debug, Default, Clone, BorshDeserialize, BorshSerialize)]
     pub struct CropAccount {
         _buffer: [u8; 8],
@@ -29,7 +29,7 @@ pub mod farm {
         pub accrued_reward_per_stake: u128,
         pub last_reward_timestamp: i64,
     }
-    
+
     #[derive(Debug, Default, Clone, BorshDeserialize, BorshSerialize)]
     pub struct StakerAccount {
         _buffer: [u8; 8],
@@ -38,7 +38,7 @@ pub mod farm {
         pub authority: Pubkey,
         pub staked_amount: u64,
     }
-    
+
     #[derive(Debug, Default, Clone, BorshDeserialize, BorshSerialize)]
     pub struct HarvesterAccount {
         _buffer: [u8; 8],
@@ -49,15 +49,13 @@ pub mod farm {
         pub authority: Pubkey,
     }
 
-
-
     #[cfg(test)]
     mod test {
         use super::farm::*;
         use borsh::BorshDeserialize;
-        use static_pubkey::static_pubkey;
-        use solana_program::{self, system_program};
         use solana_client::rpc_client;
+        use solana_program::{self, system_program};
+        use static_pubkey::static_pubkey;
         #[test]
         fn test_load_farm_account() {
             let test_key = static_pubkey!("J55atXt8BnF99YUC4AmpHY2VuxZ6XbBTjL7dHaePid42");
@@ -69,7 +67,8 @@ pub mod farm {
                 if let Some(crop_account) = crop_account {
                     let crop_account_data = rpc.get_account_data(crop_account).unwrap();
                     println!("crop_address {}", crop_account);
-                    let crop_account = CropAccount::deserialize(&mut &crop_account_data[..]).unwrap();
+                    let crop_account =
+                        CropAccount::deserialize(&mut &crop_account_data[..]).unwrap();
                     println!("crop_account {:#?}", crop_account);
                 }
             }
@@ -142,31 +141,33 @@ pub mod pool {
         pub client_order_id: u64,
     }
 
-
-
     #[cfg(test)]
     mod test {
         use crate::atrix::pool::PoolAccount;
 
         use super::{farm::*, ProtocolAccount};
         use borsh::BorshDeserialize;
-        use static_pubkey::static_pubkey;
-        use solana_program::{self, system_program};
         use solana_client::rpc_client;
+        use solana_program::{self, system_program};
+        use static_pubkey::static_pubkey;
         #[test]
         fn test_load_pool_account() {
             let test_key = static_pubkey!("7yQzTZ9nMpsSePZxgxWpGMK62Zrkr9u7ngEsxyC9j7pG");
             let rpc = rpc_client::RpcClient::new("https://ssc-dao.genesysgo.net".to_string());
             let farm_account_data = rpc.get_account_data(&test_key).unwrap();
             let pool_account = PoolAccount::deserialize(&mut &farm_account_data[..]).unwrap();
-            assert_eq!(pool_account.coin_mint.to_string(), "smbdJcLBrtKPhjrWCpDv5ABdJwz2vYo3mm6ojmePL3t".to_string());
+            assert_eq!(
+                pool_account.coin_mint.to_string(),
+                "smbdJcLBrtKPhjrWCpDv5ABdJwz2vYo3mm6ojmePL3t".to_string()
+            );
         }
         #[test]
         fn test_load_protocol_account() {
             let test_key = static_pubkey!("3uTzTX5GBSfbW7eM9R9k95H7Txe32Qw3Z25MtyD2dzwC");
             let rpc = rpc_client::RpcClient::new("https://ssc-dao.genesysgo.net".to_string());
             let farm_account_data = rpc.get_account_data(&test_key).unwrap();
-            let protocol_account = ProtocolAccount::deserialize(&mut &farm_account_data[..]).unwrap();
+            let protocol_account =
+                ProtocolAccount::deserialize(&mut &farm_account_data[..]).unwrap();
             println!("{:#?}", protocol_account);
         }
     }

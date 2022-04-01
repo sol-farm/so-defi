@@ -2467,6 +2467,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "sighashdb"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c572078a11487ff0b637690c3ddba3683cab96791bb516f67bcb4f8da049de52"
+dependencies = [
+ "lazy_static",
+]
+
+[[package]]
 name = "signal-hook-registry"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2522,6 +2531,7 @@ dependencies = [
  "borsh-derive",
  "data-encoding",
  "ring",
+ "sighashdb",
  "so-defi-accounts",
  "solana-client",
  "solana-program",
