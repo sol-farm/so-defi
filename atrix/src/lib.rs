@@ -121,8 +121,8 @@ pub mod instructions {
                 accounts: vec![
                     AccountMeta::new_readonly(farm_key, false),
                     AccountMeta::new(staker_account, false),
-                    AccountMeta::new_readonly(authority, false),
-                    AccountMeta::new_readonly(authority, false),
+                    AccountMeta::new(authority, true),
+                    AccountMeta::new(authority, true),
                     AccountMeta::new_readonly(system_program::id(), false),
                     AccountMeta::new_readonly(sysvar::rent::id(), false),
                 ],
