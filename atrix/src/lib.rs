@@ -297,7 +297,7 @@ pub mod instructions {
                     AccountMeta::new(harvester_account, false),
                     AccountMeta::new(user_reward_token_account, false),
                     AccountMeta::new(user_stake_token_account, false),
-                    AccountMeta::new_readonly(authority, false),
+                    AccountMeta::new(authority, true),
                     AccountMeta::new_readonly(spl_token::id(), false),
                     AccountMeta::new_readonly(sysvar::clock::id(), false),
                 ],
