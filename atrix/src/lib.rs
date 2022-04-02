@@ -18,6 +18,8 @@ pub mod addresses {
     /// atrix pool program
     pub const POOL_PROGRAM_ID: Pubkey =
         static_pubkey!("HvwYjjzPbXWpykgVZhqvvfeeaSraQVnTiQibofaFw9M7");
+    /// address of the protocol account
+    pub const PROTOCOL_ACCOUNT: Pubkey = static_pubkey!("3uTzTX5GBSfbW7eM9R9k95H7Txe32Qw3Z25MtyD2dzwC");
     /// serum v3 dex program address
     pub const SERUM_DEX_PROGRAM_ID: Pubkey = static_pubkey!("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin");
     pub const FARM_SEED: &[u8; 10] = b"atrix-farm";
