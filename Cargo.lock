@@ -2468,9 +2468,9 @@ dependencies = [
 
 [[package]]
 name = "sighashdb"
-version = "0.1.2"
+version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c7f0e2ecbe2d35934ece908e616ce5ea79cb3fff6738d7d4e28186ca8a0f2245"
+checksum = "28e83181870730878fb7632c0738d6ebacd791f3cfb3279564ee11d541865884"
 
 [[package]]
 name = "signal-hook-registry"
@@ -2522,7 +2522,7 @@ dependencies = [
 
 [[package]]
 name = "so-defi-atrix"
-version = "0.1.8"
+version = "0.1.9"
 dependencies = [
  "borsh",
  "borsh-derive",

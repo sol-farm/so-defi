@@ -342,6 +342,29 @@ pub mod instructions {
                 data,
             }
         }
+
+        pub fn new_create_harvester_ix(
+            crop_account: Pubkey,
+            harvester_account: Pubkey,
+            authority: Pubkey,
+            payer: Pubkey,
+            harvester_bump: u8,
+        ) -> Instruction {
+            let mut data = GlobalSighashDB.get("create_harvester").unwrap().to_vec();
+            data.push(harvester_bump);
+            Instruction {
+                program_id: addresses::FARM_PROGRAM_ID,
+                accounts: vec![
+                    AccountMeta::new_readonly(crop_account, false),
+                    AccountMeta::new(harvester_account, false),
+                    AccountMeta::new(authority, true),
+                    AccountMeta::new(payer, true),
+                    AccountMeta::new_readonly(system_program::id(), false),
+                    AccountMeta::new_readonly(sysvar::rent::id(), false),
+                ],
+                data,
+            }
+        }
     }
     pub mod pool {
         use crate::addresses::SERUM_DEX_PROGRAM_ID;
