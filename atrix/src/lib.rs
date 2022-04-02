@@ -105,7 +105,7 @@ pub mod instructions {
         instruction::{AccountMeta, Instruction},
         system_program, sysvar,
     };
-    use sighashdb::GLOBAL_SIGHASHDB;
+    use sighashdb::GlobalSighashDB;
     pub mod farm {
         use super::*;
         pub fn new_create_staker_account_ix(
@@ -114,7 +114,7 @@ pub mod instructions {
             staker_account: Pubkey,
             staker_account_bump: u8,
         ) -> Instruction {
-            let mut data = GLOBAL_SIGHASHDB.get("create_staker").unwrap().to_vec();
+            let mut data = GlobalSighashDB.get("create_staker").unwrap().to_vec();
             data.push(staker_account_bump);
             Instruction {
                 program_id: addresses::FARM_PROGRAM_ID,
@@ -141,7 +141,7 @@ pub mod instructions {
             authority: Pubkey,
             amount: u64,
         ) -> Instruction {
-            let mut data = GLOBAL_SIGHASHDB.get("stake").unwrap().to_vec();
+            let mut data = GlobalSighashDB.get("stake").unwrap().to_vec();
             data.extend_from_slice(&amount.to_le_bytes()[..]);
             Instruction {
                 program_id: addresses::FARM_PROGRAM_ID,
@@ -177,7 +177,7 @@ pub mod instructions {
             authority: Pubkey,
             amount: u64,
         ) -> Instruction {
-            let mut data = GLOBAL_SIGHASHDB.get("stake_dual_crop").unwrap().to_vec();
+            let mut data = GlobalSighashDB.get("stake_dual_crop").unwrap().to_vec();
             data.extend_from_slice(&amount.to_le_bytes()[..]);
             Instruction {
                 program_id: addresses::FARM_PROGRAM_ID,
@@ -213,7 +213,7 @@ pub mod instructions {
             authority: Pubkey,
             amount: u64,
         ) -> Instruction {
-            let mut data = GLOBAL_SIGHASHDB.get("unstake").unwrap().to_vec();
+            let mut data = GlobalSighashDB.get("unstake").unwrap().to_vec();
             data.extend_from_slice(&amount.to_le_bytes()[..]);
             Instruction {
                 program_id: addresses::FARM_PROGRAM_ID,
@@ -249,7 +249,7 @@ pub mod instructions {
             authority: Pubkey,
             amount: u64,
         ) -> Instruction {
-            let mut data = GLOBAL_SIGHASHDB.get("unstake_dual_crop").unwrap().to_vec();
+            let mut data = GlobalSighashDB.get("unstake_dual_crop").unwrap().to_vec();
             data.extend_from_slice(&amount.to_le_bytes()[..]);
             Instruction {
                 program_id: addresses::FARM_PROGRAM_ID,
@@ -284,7 +284,7 @@ pub mod instructions {
             user_stake_token_account: Pubkey,
             authority: Pubkey,
         ) -> Instruction {
-            let data = GLOBAL_SIGHASHDB.get("claim").unwrap().to_vec();
+            let data = GlobalSighashDB.get("claim").unwrap().to_vec();
             Instruction {
                 program_id: addresses::FARM_PROGRAM_ID,
                 accounts: vec![
@@ -318,7 +318,7 @@ pub mod instructions {
             user_stake_token_account: Pubkey,
             authority: Pubkey,
         ) -> Instruction {
-            let data = GLOBAL_SIGHASHDB.get("claim_dual_crop").unwrap().to_vec();
+            let data = GlobalSighashDB.get("claim_dual_crop").unwrap().to_vec();
             Instruction {
                 program_id: addresses::FARM_PROGRAM_ID,
                 accounts: vec![
@@ -372,7 +372,7 @@ pub mod instructions {
             min_pc_amount: u64,
         ) -> Instruction {
             let mut data = Vec::with_capacity(8 + (8 * 4));
-            data.extend_from_slice(&GLOBAL_SIGHASHDB.get("deposit").unwrap()[..]);
+            data.extend_from_slice(&GlobalSighashDB.get("deposit").unwrap()[..]);
             data.extend_from_slice(&desired_coin_amount.to_le_bytes()[..]);
             data.extend_from_slice(&desired_pc_amount.to_le_bytes()[..]);
             data.extend_from_slice(&min_coin_amount.to_le_bytes()[..]);
@@ -427,7 +427,7 @@ pub mod instructions {
             withdraw_lp_amount: u64,
         ) -> Instruction {
             let mut data = Vec::with_capacity(16);
-            data.extend_from_slice(&GLOBAL_SIGHASHDB.get("withdraw").unwrap()[..]);
+            data.extend_from_slice(&GlobalSighashDB.get("withdraw").unwrap()[..]);
             data.extend_from_slice(&withdraw_lp_amount.to_le_bytes()[..]);
             Instruction {
                 program_id: addresses::POOL_PROGRAM_ID,
