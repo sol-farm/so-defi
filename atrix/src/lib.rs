@@ -7,6 +7,7 @@ pub mod prelude {
     pub use super::instructions;
     pub use solana_program;
     pub use static_pubkey::static_pubkey;
+    pub use so_defi_accounts::atrix as atrix_accounts;
 }
 
 pub mod addresses {
