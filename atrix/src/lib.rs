@@ -100,6 +100,8 @@ pub mod addresses {
 }
 
 pub mod instructions {
+    use crate::addresses::SERUM_DEX_PROGRAM_ID;
+
     use super::*;
     use addresses;
     use solana_program::{
@@ -480,6 +482,94 @@ pub mod instructions {
                 ],
                 data,
             }
+        }
+    }
+    pub fn new_ix1_ix(
+        protocol_account: Pubkey,
+        pool_account: Pubkey,
+        pool_coin_token_account: Pubkey,
+        pool_pc_token_account: Pubkey,
+        pool_lp_mint :Pubkey,
+        user_coin_token_account: Pubkey,
+        user_pc_token_account: Pubkey,
+        user_lp_token_account: Pubkey,
+        user_authority: Pubkey,
+        market: Pubkey,
+        open_orders: Pubkey,
+        request_queue: Pubkey,
+        event_queue: Pubkey,
+        bids: Pubkey,
+        asks: Pubkey,
+        serum_coin_vault: Pubkey,
+        serum_pc_vault: Pubkey,
+        serum_vault_signer: Pubkey,
+    ) -> Instruction {
+        Instruction {
+            program_id: addresses::POOL_PROGRAM_ID,
+            accounts: vec![
+                AccountMeta::new_readonly(protocol_account, false),
+                AccountMeta::new(pool_account, false),
+                AccountMeta::new(pool_coin_token_account, false),
+                AccountMeta::new(pool_pc_token_account, false),
+                AccountMeta::new(pool_lp_mint, false),
+                AccountMeta::new(user_coin_token_account, false),
+                AccountMeta::new(user_pc_token_account, false),
+                AccountMeta::new(user_lp_token_account, false),
+                AccountMeta::new_readonly(user_authority, true),
+                AccountMeta::new(market, false),
+                AccountMeta::new(open_orders, false),
+                AccountMeta::new(request_queue, false),
+                AccountMeta::new(event_queue, false),
+                AccountMeta::new(bids, false),
+                AccountMeta::new(asks, false),
+                AccountMeta::new(serum_coin_vault, false),
+                AccountMeta::new(serum_pc_vault, false),
+                AccountMeta::new_readonly(serum_vault_signer, false),
+                AccountMeta::new_readonly(spl_token::id(), false),
+                AccountMeta::new_readonly(SERUM_DEX_PROGRAM_ID, false),
+                AccountMeta::new_readonly(sysvar::rent::id(), false),
+            ],
+            data: GlobalSighashDB.get("ix1").unwrap().to_vec(),
+        }
+    }
+    pub fn new_place_ix_ix(
+        protocol_account: Pubkey,
+        pool_account: Pubkey,
+        pool_coin_token_account: Pubkey,
+        pool_pc_token_account: Pubkey,
+        user_authority: Pubkey,
+        market: Pubkey,
+        open_orders: Pubkey,
+        request_queue: Pubkey,
+        event_queue: Pubkey,
+        bids: Pubkey,
+        asks: Pubkey,
+        serum_coin_vault: Pubkey,
+        serum_pc_vault: Pubkey,
+        serum_vault_signer: Pubkey,
+    ) -> Instruction {
+        Instruction {
+            program_id: addresses::POOL_PROGRAM_ID,
+            accounts: vec![
+                AccountMeta::new_readonly(protocol_account, false),
+                AccountMeta::new(pool_account, false),
+                AccountMeta::new(pool_coin_token_account, false),
+                AccountMeta::new(pool_pc_token_account, false),
+                AccountMeta::new(market, false),
+                AccountMeta::new(open_orders, false),
+                AccountMeta::new(request_queue, false),
+                AccountMeta::new(event_queue, false),
+                AccountMeta::new(bids, false),
+                AccountMeta::new(asks, false),
+                AccountMeta::new(serum_coin_vault, false),
+                AccountMeta::new(serum_pc_vault, false),
+                AccountMeta::new_readonly(serum_vault_signer, false),
+                AccountMeta::new(user_authority, true),
+                AccountMeta::new_readonly(spl_token::id(), false),
+                AccountMeta::new_readonly(SERUM_DEX_PROGRAM_ID, false),
+                AccountMeta::new_readonly(sysvar::rent::id(), false),
+            ],
+            data: GlobalSighashDB.get("place_ix").unwrap().to_vec(),
         }
     }
 }
