@@ -1,6 +1,6 @@
 [package]
 name = "so-defi-atrix"
-version = "0.1.10"
+version = "0.1.11"
 edition = "2021"
 authors = ["Tulip Protocol"]
 description = "atrix protocol instructions, helpers, etc.."
