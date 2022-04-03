@@ -2531,7 +2531,7 @@ dependencies = [
 
 [[package]]
 name = "so-defi-atrix"
-version = "0.1.13"
+version = "0.1.14"
 dependencies = [
  "borsh",
  "borsh-derive",
