@@ -545,7 +545,7 @@ pub mod instructions {
             Instruction {
                 program_id: addresses::POOL_PROGRAM_ID,
                 accounts: vec![
-                    AccountMeta::new_readonly(protocol_account, false),
+                    AccountMeta::new(protocol_account, false),
                     AccountMeta::new(pool_account, false),
                     AccountMeta::new(pool_coin_token_account, false),
                     AccountMeta::new(pool_pc_token_account, false),
