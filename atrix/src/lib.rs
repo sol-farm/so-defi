@@ -515,7 +515,7 @@ pub mod instructions {
                 AccountMeta::new(user_coin_token_account, false),
                 AccountMeta::new(user_pc_token_account, false),
                 AccountMeta::new(user_lp_token_account, false),
-                AccountMeta::new_readonly(user_authority, true),
+                AccountMeta::new(user_authority, true),
                 AccountMeta::new(market, false),
                 AccountMeta::new(open_orders, false),
                 AccountMeta::new(request_queue, false),
