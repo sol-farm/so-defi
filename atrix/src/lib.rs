@@ -5,9 +5,9 @@ use static_pubkey::static_pubkey;
 pub mod prelude {
     pub use super::addresses;
     pub use super::instructions;
+    pub use so_defi_accounts::atrix as atrix_accounts;
     pub use solana_program;
     pub use static_pubkey::static_pubkey;
-    pub use so_defi_accounts::atrix as atrix_accounts;
 }
 
 pub mod addresses {
@@ -20,9 +20,11 @@ pub mod addresses {
     pub const POOL_PROGRAM_ID: Pubkey =
         static_pubkey!("HvwYjjzPbXWpykgVZhqvvfeeaSraQVnTiQibofaFw9M7");
     /// address of the protocol account
-    pub const PROTOCOL_ACCOUNT: Pubkey = static_pubkey!("3uTzTX5GBSfbW7eM9R9k95H7Txe32Qw3Z25MtyD2dzwC");
+    pub const PROTOCOL_ACCOUNT: Pubkey =
+        static_pubkey!("3uTzTX5GBSfbW7eM9R9k95H7Txe32Qw3Z25MtyD2dzwC");
     /// serum v3 dex program address
-    pub const SERUM_DEX_PROGRAM_ID: Pubkey = static_pubkey!("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin");
+    pub const SERUM_DEX_PROGRAM_ID: Pubkey =
+        static_pubkey!("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin");
     pub const FARM_SEED: &[u8; 10] = b"atrix-farm";
     pub const CROP_SEED: &[u8; 15] = b"atrix-farm-crop";
     pub const FARM_STAKE_SEED: &[u8; 16] = b"atrix-farm-stake";
@@ -100,15 +102,14 @@ pub mod addresses {
 }
 
 pub mod instructions {
-    use crate::addresses::SERUM_DEX_PROGRAM_ID;
 
     use super::*;
     use addresses;
+    use sighashdb::GlobalSighashDB;
     use solana_program::{
         instruction::{AccountMeta, Instruction},
         system_program, sysvar,
     };
-    use sighashdb::GlobalSighashDB;
     pub mod farm {
         use super::*;
         pub fn new_create_staker_account_ix(
@@ -436,7 +437,7 @@ pub mod instructions {
             pool_account: Pubkey,
             pool_coin_token_account: Pubkey,
             pool_pc_token_account: Pubkey,
-            pool_lp_mint :Pubkey,
+            pool_lp_mint: Pubkey,
             user_coin_token_account: Pubkey,
             user_pc_token_account: Pubkey,
             user_lp_token_account: Pubkey,
