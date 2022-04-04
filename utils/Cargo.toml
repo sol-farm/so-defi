@@ -1,0 +1,15 @@
+[package]
+name = "so-defi-utils"
+version = "0.1.0"
+edition = "2021"
+authors = ["Tulip Protocol"]
+description = "utility functions for working with solana programs"
+keywords = ["solana", "configuration", "defi", "tulip-protocol"]
+license = "MIT/Apache-2.0"
+readme = "../README.md"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bytemuck = "1.7.2"
+solana-program = "1.9"
