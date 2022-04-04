@@ -2557,6 +2557,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "so-defi-utils"
+version = "0.1.0"
+dependencies = [
+ "bytemuck",
+ "solana-program",
+]
+
+[[package]]
 name = "socket2"
 version = "0.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
