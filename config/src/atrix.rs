@@ -2,7 +2,8 @@
 
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use solana_program::pubkey::Pubkey;
+use std::str::FromStr;
 
 /// the hostname and main path for Atrix's
 pub const ATRIX_API: &str = "https://api.atrix.finance/api";
@@ -52,6 +53,27 @@ pub mod tvl_list {
         pub key: String,
         pub tvl: f64,
         pub apy: f64,
+    }
+
+    impl Pool {
+        pub fn pool_key(&self) -> Pubkey {
+            Pubkey::from_str(&self.pool_key).unwrap()
+        }
+        pub fn lp_mint(&self) -> Pubkey {
+            Pubkey::from_str(&self.lp_mint).unwrap()
+        }
+        pub fn coin_mint(&self) -> Pubkey {
+            Pubkey::from_str(&self.coin_mint).unwrap()
+        }
+        pub fn pc_mint(&self) -> Pubkey {
+            Pubkey::from_str(&self.pc_mint).unwrap()
+        }
+    }
+
+    impl Farm {
+        pub fn key(&self) -> Pubkey {
+            Pubkey::from_str(&self.key).unwrap()
+        }
     }
 
     pub fn api_url() -> String {
@@ -143,6 +165,42 @@ pub mod pools_list {
         pub apy: f64,
     }
 
+    impl Pool {
+        pub fn id(&self) -> Pubkey {
+            Pubkey::from_str(&self.id).unwrap()
+        }
+        pub fn coin_mint(&self) -> Pubkey {
+            Pubkey::from_str(&self.coin_mint).unwrap()
+        }
+        pub fn pc_mint(&self) -> Pubkey {
+            Pubkey::from_str(&self.pc_mint).unwrap()
+        }
+        pub fn market(&self) -> Pubkey {
+            Pubkey::from_str(&self.market).unwrap()
+        }
+        pub fn open_orders(&self) -> Pubkey {
+            Pubkey::from_str(&self.open_orders).unwrap()
+        }
+        pub fn pool_coin_account(&self) -> Pubkey {
+            Pubkey::from_str(&self.pool_coin_account).unwrap()
+        }
+        pub fn pool_pc_account(&self) -> Pubkey {
+            Pubkey::from_str(&self.pool_pc_account).unwrap()
+        }
+        pub fn pool_lp_account(&self) -> Pubkey {
+            Pubkey::from_str(&self.pool_lp_account).unwrap()
+        }
+        pub fn lp_mint(&self) -> Pubkey {
+            Pubkey::from_str(&self.lp_mint).unwrap()
+        }
+    }
+
+    impl Farm {
+        pub fn key(&self) -> Pubkey {
+            Pubkey::from_str(&self.key).unwrap()
+        }
+    }
+
     pub fn api_url() -> String {
         format_api_url(ATRIX_API_POOLS_LIST)
     }
@@ -210,7 +268,26 @@ pub mod farms_list {
         pub apy: f64,
         pub tvl: f64,
     }
-
+    impl Farm {
+        pub fn id(&self) -> Pubkey {
+            Pubkey::from_str(&self.id).unwrap()
+        }
+        pub fn farm_stake_token_account(&self) -> Pubkey {
+            Pubkey::from_str(&self.farm_stake_token_account).unwrap()
+        }
+        pub fn crop_accounts(&self) -> Vec<Option<Pubkey>> {
+            self.crop_accounts.iter().map(|val| {
+                if let Some(val) = val {
+                    match Pubkey::from_str(val.as_str()) {
+                        Ok(val_key) => Some(val_key),
+                        Err(_) => None,
+                    }
+                } else {
+                    None
+                }
+            }).collect()
+        }
+    }
     pub fn api_url() -> String {
         format_api_url(ATRIX_API_FARMS_LIST)
     }

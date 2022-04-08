@@ -2547,11 +2547,12 @@ dependencies = [
 
 [[package]]
 name = "so-defi-config"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "anyhow",
  "reqwest",
  "serde",
+ "solana-program",
  "thiserror",
  "tokio",
 ]
