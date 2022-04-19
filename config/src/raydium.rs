@@ -284,6 +284,23 @@ pub mod liquidity_list {
             }
             assert_eq!(ok, true);
         }
+        
+        #[tokio::test]
+        async fn test_fetch_async_stable_swap() {
+            let liquidity = fetch_async().await.unwrap();
+            let mut ok = false;
+            for liquidity in liquidity.un_official.iter() {
+                if liquidity
+                    .id
+                    .eq(&"9DTY3rv8xRa3CnoPoWJCMcQUSY7kUHZAoFKNsBhx8DDz")
+                {
+                    println!("found it {:#?}", liquidity);
+                    ok = true;
+                    break;
+                }
+            }
+            assert_eq!(ok, true);
+        }
         #[test]
         fn test_fetch() {
             let _ = fetch().unwrap();
