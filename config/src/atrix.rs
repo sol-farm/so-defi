@@ -276,16 +276,19 @@ pub mod farms_list {
             Pubkey::from_str(&self.farm_stake_token_account).unwrap()
         }
         pub fn crop_accounts(&self) -> Vec<Option<Pubkey>> {
-            self.crop_accounts.iter().map(|val| {
-                if let Some(val) = val {
-                    match Pubkey::from_str(val.as_str()) {
-                        Ok(val_key) => Some(val_key),
-                        Err(_) => None,
+            self.crop_accounts
+                .iter()
+                .map(|val| {
+                    if let Some(val) = val {
+                        match Pubkey::from_str(val.as_str()) {
+                            Ok(val_key) => Some(val_key),
+                            Err(_) => None,
+                        }
+                    } else {
+                        None
                     }
-                } else {
-                    None
-                }
-            }).collect()
+                })
+                .collect()
         }
     }
     pub fn api_url() -> String {

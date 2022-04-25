@@ -2558,6 +2558,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "so-defi-token-list"
+version = "0.1.0"
+dependencies = [
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
 name = "so-defi-utils"
 version = "0.1.0"
 dependencies = [

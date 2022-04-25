@@ -3,7 +3,8 @@ members = [
     "atrix",
     "accounts",
     "config",
-    "utils"
+    "utils",
+    "token-list"
 ]
 [profile.release]
 lto = "fat"

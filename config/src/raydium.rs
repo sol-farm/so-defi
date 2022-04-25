@@ -284,7 +284,7 @@ pub mod liquidity_list {
             }
             assert_eq!(ok, true);
         }
-        
+
         #[tokio::test]
         async fn test_fetch_async_stable_swap() {
             let liquidity = fetch_async().await.unwrap();
