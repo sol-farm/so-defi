@@ -121,7 +121,7 @@ pub mod tvl_list {
 pub mod pools_list {
     //! configuration helpers for the raydium pairs api request
 
-    use super::*;
+    use super::{*, farms_list::FarmsList};
     pub const ATRIX_API_POOLS_LIST: &str = "pools";
 
     #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -215,22 +215,41 @@ pub mod pools_list {
         pub async fn initialize() -> Result<PoolsList> {
             fetch_async().await
         }
-        /// attempts to fill in the missing pool name information using the solana
+        /// attempts to fill in the missing pool and farm name information using the solana
         /// token list to map coin/pc mints -> names
-        pub async fn guess_names(&mut self) -> Result<()> {
+        pub async fn guess_names(&mut self, farms_list: &mut FarmsList) -> Result<()> {
             let guesser =
                 so_defi_token_list::market_name_guesser::MarketNameGuesser::initialize().await?;
             for pool in self.pools.iter_mut() {
                 match guesser.guess_name(&pool.coin_mint, &pool.pc_mint) {
                     Some(info) => {
                         if let Some(name) = pool.name.as_mut() {
-                            *name = info.market;
+                            *name = info.market.clone();
                         } else {
-                            pool.name = Some(info.market);
+                            pool.name = Some(info.market.clone());
+                        }
+                        for (idx, pool_farm) in pool.farms.iter().enumerate() {
+                            for farm in farms_list.farms.iter_mut() {
+                                if farm.id.eq(&pool_farm.key) {
+                                    // for farms with an idx > 0 (which will be very few)
+                                    // append the idx to the end of the name
+                                    let farm_name = if idx > 0 {
+                                        format!("{}-{}", info.market.clone(), idx)
+                                    } else {
+                                        info.market.clone()
+                                    };
+
+                                    if let Some(name) = farm.name.as_mut() {
+                                        *name = farm_name;
+                                    } else {
+                                        farm.name = Some(farm_name);
+                                    }
+                                }
+                            }
                         }
                     }
                     None => {
-                        println!("failed to guess name for pool_id {}", pool.id);
+                        println!("failed to guess name for pool_id {},pc {}, coin {}", pool.id, pool.pc_mint, pool.coin_mint);
                         continue;
                     }
                 }
@@ -290,8 +309,9 @@ pub mod pools_list {
         }
         #[tokio::test]
         async fn test_pool_list() {
-            let mut list = PoolsList::initialize().await.unwrap();
-            list.guess_names().await.unwrap();
+            let mut pool_list = PoolsList::initialize().await.unwrap();
+            let mut farm_list = FarmsList::initialize().await.unwrap();
+            pool_list.guess_names(&mut farm_list).await.unwrap();
         }
     }
 }
@@ -304,7 +324,7 @@ pub mod farms_list {
 
     #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
-    pub struct FarmList {
+    pub struct FarmsList {
         pub farms: Vec<Farm>,
     }
 
@@ -323,6 +343,17 @@ pub mod farms_list {
         pub stake_mint: String,
         pub apy: f64,
         pub tvl: f64,
+        /// this is not returned from atrix's api, however
+        /// we include this as an option to avoid deserialization
+        /// but allow manually updating the object with the pool name
+        pub name: Option<String>,
+    }
+    impl FarmsList {
+        /// intiailizes the PoolList object, populating with all values
+        /// returned from atrix's API
+        pub async fn initialize() -> Result<FarmsList> {
+            fetch_async().await
+        }
     }
     impl Farm {
         pub fn id(&self) -> Pubkey {
@@ -346,23 +377,39 @@ pub mod farms_list {
                 })
                 .collect()
         }
+
     }
     pub fn api_url() -> String {
         format_api_url(ATRIX_API_FARMS_LIST)
     }
 
-    pub async fn fetch_async() -> Result<FarmList> {
+    pub async fn fetch_async() -> Result<FarmsList> {
         let client = reqwest::Client::builder().build()?;
         let res = client.get(api_url()).send().await?;
-        let data = res.json::<FarmList>().await?;
+        let data = res.json::<FarmsList>().await?;
         Ok(data)
     }
-    pub fn fetch() -> Result<FarmList> {
+    pub fn fetch() -> Result<FarmsList> {
         let client = reqwest::blocking::Client::builder().build()?;
         let res = client.get(api_url()).send()?;
-        let data = res.json::<FarmList>()?;
+        let data = res.json::<FarmsList>()?;
         Ok(data)
     }
+
+    impl From<Vec<Farm>> for FarmsList {
+        fn from(farms: Vec<Farm>) -> Self {
+            Self::from(&farms)
+        }
+    }
+
+    impl From<&Vec<Farm>> for FarmsList {
+        fn from(farms: &Vec<Farm>) -> Self {
+            Self {
+                farms: farms.clone(),
+            }
+        }
+    }
+
     #[cfg(test)]
     mod test {
         use super::*;
