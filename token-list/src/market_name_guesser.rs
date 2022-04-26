@@ -1,9 +1,11 @@
 use std::collections::HashMap;
 
-use crate::TokenList;
-
+/// allows brute forcing an unknown trading market's "name" based
+/// on the coin and pc assets in the trading pair (sometimes refered to as tokenA or tokenB)
+///
+/// the solana token list repo is used as the index of token names, and assets which is a community
+/// maintained list, as such it could potentially be considered unreliable.
 pub struct MarketNameGuesser {
-    token_list: TokenList,
     /// a map of an asset address -> (name, symbol)
     assets: HashMap<String, (String, String)>,
 }
@@ -26,7 +28,7 @@ impl MarketNameGuesser {
                 (token.name.clone(), token.symbol.clone()),
             );
         }
-        Ok(MarketNameGuesser { token_list, assets })
+        Ok(MarketNameGuesser { assets })
     }
     /// attempts to guess the market name, returning None if the guess failed
     pub fn guess_name(&self, coin_address: &str, pc_address: &str) -> Option<GuessedName> {

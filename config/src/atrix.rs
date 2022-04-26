@@ -45,6 +45,10 @@ pub mod tvl_list {
         pub pc_tokens: f64,
         pub pc_decimals: i64,
         pub farms: Vec<Farm>,
+        /// this is not returned from atrix's api, however
+        /// we include this as an option to avoid deserialization
+        /// but allow manually updating the object with the pool name
+        pub name: Option<String>,
     }
 
     #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -155,6 +159,10 @@ pub mod pools_list {
         #[serde(rename = "pool_pc_amt")]
         pub pool_pc_amt: String,
         pub farms: Vec<Farm>,
+        /// this is not returned from atrix's api, however
+        /// we include this as an option to avoid deserialization
+        /// but allow manually updating the object with the pool name
+        pub name: Option<String>,
     }
 
     #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -201,6 +209,44 @@ pub mod pools_list {
         }
     }
 
+    impl PoolsList {
+        /// intiailizes the PoolList object, populating with all values
+        /// returned from atrix's API
+        pub async fn initialize() -> Result<PoolsList> {
+            fetch_async().await
+        }
+        /// attempts to fill in the missing pool name information using the solana
+        /// token list to map coin/pc mints -> names
+        pub async fn guess_names(&mut self) -> Result<()> {
+            let guesser =
+                so_defi_token_list::market_name_guesser::MarketNameGuesser::initialize().await?;
+            for pool in self.pools.iter_mut() {
+                match guesser.guess_name(&pool.coin_mint, &pool.pc_mint) {
+                    Some(info) => {
+                        if let Some(name) = pool.name.as_mut() {
+                            *name = info.market;
+                        } else {
+                            pool.name = Some(info.market);
+                        }
+                    }
+                    None => {
+                        println!("failed to guess name for pool_id {}", pool.id);
+                        continue;
+                    }
+                }
+            }
+            Ok(())
+        }
+    }
+
+    impl From<Vec<Pool>> for PoolsList {
+        fn from(pools: Vec<Pool>) -> Self {
+            Self {
+                pools: pools.clone(),
+            }
+        }
+    }
+
     pub fn api_url() -> String {
         format_api_url(ATRIX_API_POOLS_LIST)
     }
@@ -236,6 +282,11 @@ pub mod pools_list {
         fn test_fetch() {
             let result = fetch().unwrap();
             assert!(result.pools.len() > 0);
+        }
+        #[tokio::test]
+        async fn test_pool_list() {
+            let mut list = PoolsList::initialize().await.unwrap();
+            list.guess_names().await.unwrap();
         }
     }
 }
