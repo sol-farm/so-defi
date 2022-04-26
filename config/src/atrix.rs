@@ -238,9 +238,14 @@ pub mod pools_list {
             Ok(())
         }
     }
-
     impl From<Vec<Pool>> for PoolsList {
         fn from(pools: Vec<Pool>) -> Self {
+            Self::from(&pools)
+        }
+    }
+
+    impl From<&Vec<Pool>> for PoolsList {
+        fn from(pools: &Vec<Pool>) -> Self {
             Self {
                 pools: pools.clone(),
             }
