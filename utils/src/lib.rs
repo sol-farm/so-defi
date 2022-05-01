@@ -1,3 +1,5 @@
+pub mod accessor;
+
 use bytemuck::cast_slice;
 use solana_program::pubkey::Pubkey;
 use std::convert::identity;
