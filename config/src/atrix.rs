@@ -169,7 +169,6 @@ pub mod pools_list {
     #[serde(rename_all = "camelCase")]
     pub struct Farm {
         pub key: String,
-        pub tvl: f64,
         pub apy: f64,
     }
 
@@ -342,7 +341,6 @@ pub mod farms_list {
         #[serde(rename = "stake_mint")]
         pub stake_mint: String,
         pub apy: f64,
-        pub tvl: f64,
         /// this is not returned from atrix's api, however
         /// we include this as an option to avoid deserialization
         /// but allow manually updating the object with the pool name
