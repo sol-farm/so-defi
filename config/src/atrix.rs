@@ -27,6 +27,7 @@ pub mod tvl_list {
     #[serde(rename_all = "camelCase")]
     pub struct TvlList {
         pub tvl: f64,
+        pub tvl_usd: f64,
         pub pools: Vec<Pool>,
         pub farms: Vec<Farm>,
     }
@@ -35,15 +36,7 @@ pub mod tvl_list {
     #[serde(rename_all = "camelCase")]
     pub struct Pool {
         pub pool_key: String,
-        pub tvl: Option<f64>,
-        pub lp_mint: String,
-        pub lp_supply: f64,
-        pub coin_mint: String,
-        pub coin_tokens: f64,
-        pub coin_decimals: i64,
-        pub pc_mint: String,
-        pub pc_tokens: f64,
-        pub pc_decimals: i64,
+        pub account_keys: AccountKeys,
         pub farms: Vec<Farm>,
         /// this is not returned from atrix's api, however
         /// we include this as an option to avoid deserialization
@@ -53,24 +46,37 @@ pub mod tvl_list {
 
     #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
+    pub struct AccountKeys {
+        pub open_orders: String,
+        pub pool_coin_account: String,
+        pub pool_pc_account: String,
+        pub pool_lp_account: String,
+    }
+
+    #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+    #[serde(rename_all = "camelCase")]
     pub struct Farm {
         pub key: String,
-        pub tvl: f64,
-        pub apy: f64,
     }
 
     impl Pool {
         pub fn pool_key(&self) -> Pubkey {
             Pubkey::from_str(&self.pool_key).unwrap()
         }
-        pub fn lp_mint(&self) -> Pubkey {
-            Pubkey::from_str(&self.lp_mint).unwrap()
+    }
+
+    impl AccountKeys {
+        pub fn open_orders(&self) -> Pubkey {
+            Pubkey::from_str(&self.open_orders).unwrap()
         }
-        pub fn coin_mint(&self) -> Pubkey {
-            Pubkey::from_str(&self.coin_mint).unwrap()
+        pub fn pool_coin_account(&self) -> Pubkey {
+            Pubkey::from_str(&self.pool_coin_account).unwrap()
         }
-        pub fn pc_mint(&self) -> Pubkey {
-            Pubkey::from_str(&self.pc_mint).unwrap()
+        pub fn pool_pc_account(&self) -> Pubkey {
+            Pubkey::from_str(&self.pool_pc_account).unwrap()
+        }
+        pub fn pool_lp_account(&self) -> Pubkey {
+            Pubkey::from_str(&self.pool_lp_account).unwrap()
         }
     }
 
@@ -169,7 +175,6 @@ pub mod pools_list {
     #[serde(rename_all = "camelCase")]
     pub struct Farm {
         pub key: String,
-        pub apy: f64,
     }
 
     impl Pool {
@@ -340,7 +345,7 @@ pub mod farms_list {
         pub authority: String,
         #[serde(rename = "stake_mint")]
         pub stake_mint: String,
-        pub apy: f64,
+        pub apy: Option<f64>,
         /// this is not returned from atrix's api, however
         /// we include this as an option to avoid deserialization
         /// but allow manually updating the object with the pool name
