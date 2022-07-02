@@ -144,7 +144,6 @@ pub mod farm_list {
     #[serde(rename_all = "camelCase")]
     pub struct FarmList {
         pub name: String,
-        pub timestamp: String,
         pub version: Version,
         pub official: Vec<FarmListEntry>,
     }
@@ -316,7 +315,6 @@ pub mod token_list {
     #[serde(rename_all = "camelCase")]
     pub struct TokenList {
         pub name: String,
-        pub timestamp: String,
         pub version: Version,
         pub official: Vec<TokenListEntry>,
         // ignore this for now
