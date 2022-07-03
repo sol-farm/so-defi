@@ -1,7 +1,12 @@
 //! utilities for accessor style functions
 
+use solana_program::account_info::{Account, AccountInfo};
 use solana_program::pubkey::Pubkey;
-use solana_program::account_info::AccountInfo;
+
+pub trait Accessor<T: Account> {
+    fn access(self, accessor_type: AccessorType) -> Vec<u8>;
+}
+
 /// defines data types which can be used for accessing values
 /// the value contained within the enum is the offset at which
 /// the data type starts
@@ -10,6 +15,27 @@ pub enum AccessorType {
     U64(usize),
     U128(usize),
     Pubkey(usize),
+}
+
+#[cfg(feature = "experimental")]
+impl<'a, T: Account> Accessor<T> for &mut T {
+    fn access(self, accessor_type: AccessorType) -> Vec<u8> {
+        let (_, data, _, _, _) = self.get();
+        let (output_size, offset) = match accessor_type {
+            AccessorType::Bool(offset) => (accessor_type.data_size(), offset),
+            AccessorType::U64(offset) => (accessor_type.data_size(), offset),
+            AccessorType::U128(offset) => (accessor_type.data_size(), offset),
+            AccessorType::Pubkey(offset) => (accessor_type.data_size(), offset),
+        };
+        // initialize the output vector with a given capacity
+        let mut output_bytes = vec![0_u8; output_size];
+        solana_program::program_memory::sol_memcpy(
+            &mut output_bytes,
+            &data[offset..output_size + offset],
+            output_size,
+        );
+        output_bytes
+    }
 }
 
 impl AccessorType {
@@ -59,6 +85,17 @@ mod test {
     use super::*;
     use solana_client::rpc_client::RpcClient;
     use solana_program::account_info::IntoAccountInfo;
+    #[test]
+    fn test_accessor_trait() {
+        let test_srm_acct =
+            Pubkey::from_str("Hu43u5GxMfSwjPsYF6STMDbuu91mUJKZXfFm4roQnbA2").unwrap();
+
+        let rpc = RpcClient::new("https://api.mainnet-beta.solana.com".to_string());
+        let mut srm_acct = rpc.get_account(&test_srm_acct).unwrap();
+        let amount = srm_acct.access(AccessorType::U64(64));
+        let amount = to_u64(&amount);
+        assert_eq!(amount, 108547950373);
+    }
     #[test]
     fn test_accessor() {
         let test_srm_acct =
