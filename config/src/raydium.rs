@@ -207,7 +207,6 @@ pub mod liquidity_list {
     #[serde(rename_all = "camelCase")]
     pub struct LiquidityList {
         pub name: String,
-        pub version: Version,
         pub official: Vec<LiquidityListEntry>,
         pub un_official: Vec<LiquidityListEntry>,
     }
