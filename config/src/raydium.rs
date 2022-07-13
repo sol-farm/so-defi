@@ -144,6 +144,7 @@ pub mod farm_list {
     #[serde(rename_all = "camelCase")]
     pub struct FarmList {
         pub name: String,
+        pub version: Option<Version>,
         pub official: Vec<FarmListEntry>,
     }
 
@@ -153,7 +154,7 @@ pub mod farm_list {
         pub id: String,
         pub lp_mint: String,
         pub reward_mints: Vec<String>,
-        pub version: i64,
+        pub version: Option<i64>,
         pub program_id: String,
         pub authority: String,
         pub lp_vault: String,
@@ -206,6 +207,7 @@ pub mod liquidity_list {
     #[serde(rename_all = "camelCase")]
     pub struct LiquidityList {
         pub name: String,
+        pub version: Option<Version>,
         pub official: Vec<LiquidityListEntry>,
         pub un_official: Vec<LiquidityListEntry>,
     }
