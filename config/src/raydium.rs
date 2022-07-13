@@ -144,7 +144,6 @@ pub mod farm_list {
     #[serde(rename_all = "camelCase")]
     pub struct FarmList {
         pub name: String,
-        pub version: Version,
         pub official: Vec<FarmListEntry>,
     }
 
