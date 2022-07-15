@@ -2570,7 +2570,7 @@ dependencies = [
 
 [[package]]
 name = "so-defi-utils"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "bytemuck",
  "solana-client",
