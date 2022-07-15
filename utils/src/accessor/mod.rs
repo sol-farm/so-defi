@@ -15,7 +15,8 @@ pub enum AccessorType {
     U64(usize),
     U128(usize),
     Pubkey(usize),
-    U8(usize)
+    U8(usize),
+    U32(usize),
 }
 
 #[cfg(feature = "experimental")]
@@ -28,6 +29,7 @@ impl<'a, T: Account> Accessor<T> for &mut T {
             AccessorType::U128(offset) => (accessor_type.data_size(), offset),
             AccessorType::Pubkey(offset) => (accessor_type.data_size(), offset),
             AccessorType::U8(offset) => (accessor_type.data_size(), offset),
+            AccessorType::U32(offset) => (accessor_type.data_size(), offset),
         };
         // initialize the output vector with a given capacity
         let mut output_bytes = vec![0_u8; output_size];
@@ -48,6 +50,7 @@ impl AccessorType {
             AccessorType::U128(offset) => (self.data_size(), *offset),
             AccessorType::Pubkey(offset) => (self.data_size(), *offset),
             AccessorType::U8(offset) => (self.data_size(), *offset),
+            AccessorType::U32(offset) => (self.data_size(), *offset),
         };
         let bytes = account.data.borrow();
         // initialize the output vector with a given capacity
@@ -66,6 +69,7 @@ impl AccessorType {
             AccessorType::U128(_) => 16,
             AccessorType::Pubkey(_) => 32,
             AccessorType::U8(_) => 1,
+            AccessorType::U32(_) => 4,
         }
     }
 }
