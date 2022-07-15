@@ -15,6 +15,7 @@ pub enum AccessorType {
     U64(usize),
     U128(usize),
     Pubkey(usize),
+    U8(usize)
 }
 
 #[cfg(feature = "experimental")]
@@ -26,6 +27,7 @@ impl<'a, T: Account> Accessor<T> for &mut T {
             AccessorType::U64(offset) => (accessor_type.data_size(), offset),
             AccessorType::U128(offset) => (accessor_type.data_size(), offset),
             AccessorType::Pubkey(offset) => (accessor_type.data_size(), offset),
+            AccessorType::U8(offset) => (accessor_type.data_size(), offset),
         };
         // initialize the output vector with a given capacity
         let mut output_bytes = vec![0_u8; output_size];
@@ -45,6 +47,7 @@ impl AccessorType {
             AccessorType::U64(offset) => (self.data_size(), *offset),
             AccessorType::U128(offset) => (self.data_size(), *offset),
             AccessorType::Pubkey(offset) => (self.data_size(), *offset),
+            AccessorType::U8(offset) => (self.data_size(), *offset),
         };
         let bytes = account.data.borrow();
         // initialize the output vector with a given capacity
@@ -62,6 +65,7 @@ impl AccessorType {
             AccessorType::U64(_) => 8,
             AccessorType::U128(_) => 16,
             AccessorType::Pubkey(_) => 32,
+            AccessorType::U8(_) => 1,
         }
     }
 }
@@ -95,6 +99,9 @@ mod test {
         let amount = srm_acct.access(AccessorType::U64(64));
         let amount = to_u64(&amount);
         assert_eq!(amount, 108547950373);
+        let value = srm_acct.access(AccessorType::U8(64));
+        assert_eq!(value.len(), 1);
+        assert_eq!(value[0], 37);
     }
     #[test]
     fn test_accessor() {
