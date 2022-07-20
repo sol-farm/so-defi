@@ -219,7 +219,7 @@ pub mod liquidity_list {
         pub base_mint: String,
         pub quote_mint: String,
         pub lp_mint: String,
-        pub version: i64,
+        pub version: Option<i64>,
         pub program_id: String,
         pub authority: String,
         pub open_orders: String,
@@ -315,7 +315,7 @@ pub mod token_list {
     #[serde(rename_all = "camelCase")]
     pub struct TokenList {
         pub name: String,
-        pub version: Version,
+        pub version: Option<Version>,
         pub official: Vec<TokenListEntry>,
         // ignore this for now
         // pub blacklist: Vec<Value>,
