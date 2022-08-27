@@ -190,7 +190,9 @@ pub fn format_orca_amm_name(name: &str, stable: bool, aquafarm: bool) -> String 
 
 impl AquaFarm {
     pub fn account(&self) -> Option<Pubkey> {
-        if self.account.is_empty() { None } else {
+        if self.account.is_empty() {
+            None
+        } else {
             if let Ok(key) = Pubkey::from_str(&self.account) {
                 Some(key)
             } else {
@@ -199,7 +201,9 @@ impl AquaFarm {
         }
     }
     pub fn emissions_authority(&self) -> Option<Pubkey> {
-        if self.emissions_authority.is_empty() { None } else {
+        if self.emissions_authority.is_empty() {
+            None
+        } else {
             if let Ok(key) = Pubkey::from_str(&self.emissions_authority) {
                 Some(key)
             } else {
@@ -208,7 +212,9 @@ impl AquaFarm {
         }
     }
     pub fn remove_rewards_authority(&self) -> Option<Pubkey> {
-        if self.remove_rewards_authority.is_empty() { None } else {
+        if self.remove_rewards_authority.is_empty() {
+            None
+        } else {
             if let Ok(key) = Pubkey::from_str(&self.remove_rewards_authority) {
                 Some(key)
             } else {
@@ -217,7 +223,9 @@ impl AquaFarm {
         }
     }
     pub fn base_token_mint(&self) -> Option<Pubkey> {
-        if self.base_token_mint.is_empty() { None } else {
+        if self.base_token_mint.is_empty() {
+            None
+        } else {
             if let Ok(key) = Pubkey::from_str(&self.base_token_mint) {
                 Some(key)
             } else {
@@ -226,7 +234,9 @@ impl AquaFarm {
         }
     }
     pub fn base_token_vault(&self) -> Option<Pubkey> {
-        if self.base_token_vault.is_empty() { None } else {
+        if self.base_token_vault.is_empty() {
+            None
+        } else {
             if let Ok(key) = Pubkey::from_str(&self.base_token_vault) {
                 Some(key)
             } else {
@@ -235,7 +245,9 @@ impl AquaFarm {
         }
     }
     pub fn reward_token_mint(&self) -> Option<Pubkey> {
-        if self.reward_token_mint.is_empty() { None } else {
+        if self.reward_token_mint.is_empty() {
+            None
+        } else {
             if let Ok(key) = Pubkey::from_str(&self.reward_token_mint) {
                 Some(key)
             } else {
@@ -244,7 +256,9 @@ impl AquaFarm {
         }
     }
     pub fn reward_token_vault(&self) -> Option<Pubkey> {
-        if self.reward_token_vault.is_empty() { None } else {
+        if self.reward_token_vault.is_empty() {
+            None
+        } else {
             if let Ok(key) = Pubkey::from_str(&self.reward_token_vault) {
                 Some(key)
             } else {
@@ -253,7 +267,9 @@ impl AquaFarm {
         }
     }
     pub fn farm_token_mint(&self) -> Option<Pubkey> {
-        if self.farm_token_mint.is_empty() { None } else {
+        if self.farm_token_mint.is_empty() {
+            None
+        } else {
             if let Ok(key) = Pubkey::from_str(&self.farm_token_mint) {
                 Some(key)
             } else {
@@ -265,7 +281,9 @@ impl AquaFarm {
 
 impl DoubleDip {
     pub fn account(&self) -> Option<Pubkey> {
-        if self.account.is_empty() { None } else {
+        if self.account.is_empty() {
+            None
+        } else {
             if let Ok(key) = Pubkey::from_str(&self.account) {
                 Some(key)
             } else {
@@ -274,7 +292,9 @@ impl DoubleDip {
         }
     }
     pub fn emissions_authority(&self) -> Option<Pubkey> {
-        if self.emissions_authority.is_empty() { None } else {
+        if self.emissions_authority.is_empty() {
+            None
+        } else {
             if let Ok(key) = Pubkey::from_str(&self.emissions_authority) {
                 Some(key)
             } else {
@@ -283,7 +303,9 @@ impl DoubleDip {
         }
     }
     pub fn remove_rewards_authority(&self) -> Option<Pubkey> {
-        if self.remove_rewards_authority.is_empty() { None } else {
+        if self.remove_rewards_authority.is_empty() {
+            None
+        } else {
             if let Ok(key) = Pubkey::from_str(&self.remove_rewards_authority) {
                 Some(key)
             } else {
@@ -292,7 +314,9 @@ impl DoubleDip {
         }
     }
     pub fn base_token_mint(&self) -> Option<Pubkey> {
-        if self.base_token_mint.is_empty() { None } else {
+        if self.base_token_mint.is_empty() {
+            None
+        } else {
             if let Ok(key) = Pubkey::from_str(&self.base_token_mint) {
                 Some(key)
             } else {
@@ -301,7 +325,9 @@ impl DoubleDip {
         }
     }
     pub fn base_token_vault(&self) -> Option<Pubkey> {
-        if self.base_token_vault.is_empty() { None } else {
+        if self.base_token_vault.is_empty() {
+            None
+        } else {
             if let Ok(key) = Pubkey::from_str(&self.base_token_vault) {
                 Some(key)
             } else {
@@ -310,7 +336,9 @@ impl DoubleDip {
         }
     }
     pub fn reward_token_mint(&self) -> Option<Pubkey> {
-        if self.reward_token_mint.is_empty() { None } else {
+        if self.reward_token_mint.is_empty() {
+            None
+        } else {
             if let Ok(key) = Pubkey::from_str(&self.reward_token_mint) {
                 Some(key)
             } else {
@@ -319,7 +347,9 @@ impl DoubleDip {
         }
     }
     pub fn reward_token_vault(&self) -> Option<Pubkey> {
-        if self.reward_token_vault.is_empty() { None } else {
+        if self.reward_token_vault.is_empty() {
+            None
+        } else {
             if let Ok(key) = Pubkey::from_str(&self.reward_token_vault) {
                 Some(key)
             } else {
@@ -328,7 +358,9 @@ impl DoubleDip {
         }
     }
     pub fn farm_token_mint(&self) -> Option<Pubkey> {
-        if self.farm_token_mint.is_empty() { None } else {
+        if self.farm_token_mint.is_empty() {
+            None
+        } else {
             if let Ok(key) = Pubkey::from_str(&self.farm_token_mint) {
                 Some(key)
             } else {

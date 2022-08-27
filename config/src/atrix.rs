@@ -127,7 +127,7 @@ pub mod tvl_list {
 pub mod pools_list {
     //! configuration helpers for the raydium pairs api request
 
-    use super::{*, farms_list::FarmsList};
+    use super::{farms_list::FarmsList, *};
     pub const ATRIX_API_POOLS_LIST: &str = "pools";
 
     #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -253,7 +253,10 @@ pub mod pools_list {
                         }
                     }
                     None => {
-                        println!("failed to guess name for pool_id {},pc {}, coin {}", pool.id, pool.pc_mint, pool.coin_mint);
+                        println!(
+                            "failed to guess name for pool_id {},pc {}, coin {}",
+                            pool.id, pool.pc_mint, pool.coin_mint
+                        );
                         continue;
                     }
                 }
@@ -380,7 +383,6 @@ pub mod farms_list {
                 })
                 .collect()
         }
-
     }
     pub fn api_url() -> String {
         format_api_url(ATRIX_API_FARMS_LIST)
