@@ -9,7 +9,7 @@ use std::str::FromStr;
 pub const ATRIX_API: &str = "https://api.atrix.finance/api";
 
 /// a common type used to denote the raydium api version
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Version {
     pub major: i64,
@@ -32,7 +32,7 @@ pub mod tvl_list {
         pub farms: Vec<Farm>,
     }
 
-    #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+    #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct Pool {
         pub pool_key: String,
@@ -44,7 +44,7 @@ pub mod tvl_list {
         pub name: Option<String>,
     }
 
-    #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+    #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct AccountKeys {
         pub open_orders: String,
@@ -53,7 +53,7 @@ pub mod tvl_list {
         pub pool_lp_account: String,
     }
 
-    #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+    #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct Farm {
         pub key: String,
@@ -114,12 +114,12 @@ pub mod tvl_list {
         #[tokio::test]
         async fn test_fetch_async() {
             let results = fetch_async().await.unwrap();
-            assert!(results.pools.len() > 0);
+            assert!(!results.pools.is_empty());
         }
         #[test]
         fn test_fetch() {
             let results = fetch().unwrap();
-            assert!(results.pools.len() > 0);
+            assert!(!results.pools.is_empty());
         }
     }
 }
@@ -135,7 +135,7 @@ pub mod pools_list {
     pub struct PoolsList {
         pub pools: Vec<Pool>,
     }
-    #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+    #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct Pool {
         pub id: String,
@@ -171,7 +171,7 @@ pub mod pools_list {
         pub name: Option<String>,
     }
 
-    #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+    #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct Farm {
         pub key: String,
@@ -306,13 +306,13 @@ pub mod pools_list {
         #[tokio::test]
         async fn test_fetch_async() {
             let result = fetch_async().await.unwrap();
-            assert!(result.pools.len() > 0);
+            assert!(!result.pools.is_empty());
             println!("pool {:#?}", result.pools[result.pools.len() - 1]);
         }
         #[test]
         fn test_fetch() {
             let result = fetch().unwrap();
-            assert!(result.pools.len() > 0);
+            assert!(!result.pools.is_empty());
         }
         #[tokio::test]
         async fn test_pool_list() {
@@ -426,12 +426,12 @@ pub mod farms_list {
         #[tokio::test]
         async fn test_fetch_async() {
             let result = fetch_async().await.unwrap();
-            assert!(result.farms.len() > 0);
+            assert!(!result.farms.is_empty());
         }
         #[test]
         fn test_fetch() {
             let result = fetch().unwrap();
-            assert!(result.farms.len() > 0);
+            assert!(!result.farms.is_empty());
         }
     }
 }

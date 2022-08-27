@@ -5,12 +5,11 @@
 pub mod market_name_guesser;
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 
 /// solana token list file containing all tokens for us to parse
 pub const TOKEN_LIST_FILE: &str = "https://raw.githubusercontent.com/solana-labs/token-list/main/src/tokens/solana.tokenlist.json";
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TokenList {
     pub name: String,
@@ -22,7 +21,7 @@ pub struct TokenList {
     pub version: Version,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Token {
     pub chain_id: i64,
@@ -34,7 +33,7 @@ pub struct Token {
     pub logo_uri: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Version {
     pub major: i64,
