@@ -1,491 +1,84 @@
-pub mod price_feeds;
-pub mod error;
-pub mod utils;
-pub mod state;
-pub mod price;
-use borsh::{
-    BorshDeserialize,
-    BorshSerialize,
-};
-use bytemuck::{
-    cast_slice,
-    from_bytes,
-    try_cast_slice,
-    Pod,
-    PodCastError,
-    Zeroable,
-};
-use price_feeds::{
-    PriceIdentifier,
-    ProductIdentifier,
-};
-use solana_program::pubkey::Pubkey;
-use static_pubkey::static_pubkey;
-use std::mem::size_of;
-use price::Price;
-use price_feeds::{
-    PriceFeed,
-    PriceStatus,
-};
-
+use borsh::BorshDeserialize;
+use pyth_sdk::PriceFeed;
+use pyth_sdk::Price;
+use pyth_sdk::PriceStatus;
 use solana_program::clock::Clock;
-use solana_program::sysvar::Sysvar;
 
-/// Maximum valid slot period before price is considered to be stale.
-pub const VALID_SLOT_PERIOD: u64 = 25;
 
-use crate::error::PythError;
-
-pub const MAGIC: u32 = 0xa1b2c3d4;
-pub const VERSION_2: u32 = 2;
-pub const VERSION: u32 = VERSION_2;
-pub const MAP_TABLE_SIZE: usize = 640;
-pub const PROD_ACCT_SIZE: usize = 512;
-pub const PROD_HDR_SIZE: usize = 48;
-pub const PROD_ATTR_SIZE: usize = PROD_ACCT_SIZE - PROD_HDR_SIZE;
-
-/// The type of Pyth account determines what data it contains
-#[derive(
-    Copy,
-    Clone,
-    Debug,
-    PartialEq,
-    Eq,
-    BorshSerialize,
-    BorshDeserialize,
-    serde::Serialize,
-    serde::Deserialize,
-)]
-#[repr(C)]
-pub enum AccountType {
-    Unknown,
-    Mapping,
-    Product,
-    Price,
-}
-
-impl Default for AccountType {
-    fn default() -> Self {
-        AccountType::Unknown
-    }
-}
-
-/// Status of any ongoing corporate actions.
-/// (still undergoing dev)
-#[derive(
-    Copy,
-    Clone,
-    Debug,
-    PartialEq,
-    Eq,
-    BorshSerialize,
-    BorshDeserialize,
-    serde::Serialize,
-    serde::Deserialize,
-)]
-#[repr(C)]
-pub enum CorpAction {
-    NoCorpAct,
-}
-
-impl Default for CorpAction {
-    fn default() -> Self {
-        CorpAction::NoCorpAct
-    }
-}
-
-/// The type of prices associated with a product -- each product may have multiple price feeds of
-/// different types.
-#[derive(
-    Copy,
-    Clone,
-    Debug,
-    PartialEq,
-    Eq,
-    BorshSerialize,
-    BorshDeserialize,
-    serde::Serialize,
-    serde::Deserialize,
-)]
-#[repr(C)]
-pub enum PriceType {
-    Unknown,
-    Price,
-}
-
-impl Default for PriceType {
-    fn default() -> Self {
-        PriceType::Unknown
-    }
-}
-
-/// Mapping accounts form a linked-list containing the listing of all products on Pyth.
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-#[repr(C)]
-pub struct MappingAccount {
-    /// pyth magic number
-    pub magic:    u32,
-    /// program version
-    pub ver:      u32,
-    /// account type
-    pub atype:    u32,
-    /// account used size
-    pub size:     u32,
-    /// number of product accounts
-    pub num:      u32,
-    pub unused:   u32,
-    /// next mapping account (if any)
-    pub next:     Pubkey,
-    pub products: [Pubkey; MAP_TABLE_SIZE],
-}
-
-impl MappingAccount {
-    /// returns a vector of products which are not default (not setup)
-    pub fn products(&self) -> Vec<Pubkey> {
-        const DEFAULT_KEY: Pubkey = static_pubkey!("11111111111111111111111111111111");
-        self.products.into_iter().filter(|prod| prod.ne(&DEFAULT_KEY)).collect()
-    }
-}
-
-#[cfg(target_endian = "little")]
-unsafe impl Zeroable for MappingAccount {
-}
-
-#[cfg(target_endian = "little")]
-unsafe impl Pod for MappingAccount {
+pub struct PythPriceAccount {
+    pub feed: PriceFeed,
+    pub status: PriceStatus,
+    pub price: Price,
+    pub publish_time: i64,
 }
 
 
-/// Product accounts contain metadata for a single product, such as its symbol ("Crypto.BTC/USD")
-/// and its base/quote currencies.
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-#[repr(C)]
-pub struct ProductAccount {
-    /// pyth magic number
-    pub magic:  u32,
-    /// program version
-    pub ver:    u32,
-    /// account type
-    pub atype:  u32,
-    /// price account size
-    pub size:   u32,
-    /// first price account in list
-    pub px_acc: Pubkey,
-    /// key/value pairs of reference attr.
-    pub attr:   [u8; PROD_ATTR_SIZE],
-}
-
-impl ProductAccount {
-    pub fn iter(&self) -> AttributeIter {
-        AttributeIter { attrs: &self.attr }
-    }
-}
-
-#[cfg(target_endian = "little")]
-unsafe impl Zeroable for ProductAccount {
-}
-
-#[cfg(target_endian = "little")]
-unsafe impl Pod for ProductAccount {
-}
-
-/// A price and confidence at a specific slot. This struct can represent either a
-/// publisher's contribution or the outcome of price aggregation.
-#[derive(
-    Copy,
-    Clone,
-    Debug,
-    Default,
-    PartialEq,
-    Eq,
-    BorshSerialize,
-    BorshDeserialize,
-    serde::Serialize,
-    serde::Deserialize,
-)]
-#[repr(C)]
-pub struct PriceInfo {
-    /// the current price.
-    /// For the aggregate price use price.get_current_price() whenever possible. It has more checks
-    /// to make sure price is valid.
-    pub price:    i64,
-    /// confidence interval around the price.
-    /// For the aggregate confidence use price.get_current_price() whenever possible. It has more
-    /// checks to make sure price is valid.
-    pub conf:     u64,
-    /// status of price (Trading is valid).
-    /// For the aggregate status use price.get_current_status() whenever possible.
-    /// Price data can sometimes go stale and the function handles the status in such cases.
-    pub status:   PriceStatus,
-    /// notification of any corporate action
-    pub corp_act: CorpAction,
-    pub pub_slot: u64,
-}
-
-/// The price and confidence contributed by a specific publisher.
-#[derive(
-    Copy,
-    Clone,
-    Debug,
-    Default,
-    PartialEq,
-    Eq,
-    BorshSerialize,
-    BorshDeserialize,
-    serde::Serialize,
-    serde::Deserialize,
-)]
-#[repr(C)]
-pub struct PriceComp {
-    /// key of contributing publisher
-    pub publisher: Pubkey,
-    /// the price used to compute the current aggregate price
-    pub agg:       PriceInfo,
-    /// The publisher's latest price. This price will be incorporated into the aggregate price
-    /// when price aggregation runs next.
-    pub latest:    PriceInfo,
-}
-
-#[deprecated = "Type is renamed to Rational, please use the new name."]
-pub type Ema = Rational;
-
-/// An number represented as both `value` and also in rational as `numer/denom`.
-#[derive(
-    Copy,
-    Clone,
-    Debug,
-    Default,
-    PartialEq,
-    Eq,
-    BorshSerialize,
-    BorshDeserialize,
-    serde::Serialize,
-    serde::Deserialize,
-)]
-#[repr(C)]
-pub struct Rational {
-    pub val:   i64,
-    pub numer: i64,
-    pub denom: i64,
-}
-
-/// Price accounts represent a continuously-updating price feed for a product.
-#[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
-#[repr(C)]
-pub struct PriceAccount {
-    /// pyth magic number
-    pub magic:          u32,
-    /// program version
-    pub ver:            u32,
-    /// account type
-    pub atype:          u32,
-    /// price account size
-    pub size:           u32,
-    /// price or calculation type
-    pub ptype:          PriceType,
-    /// price exponent
-    pub expo:           i32,
-    /// number of component prices
-    pub num:            u32,
-    /// number of quoters that make up aggregate
-    pub num_qt:         u32,
-    /// slot of last valid (not unknown) aggregate price
-    pub last_slot:      u64,
-    /// valid slot-time of agg. price
-    pub valid_slot:     u64,
-    /// exponentially moving average price
-    pub ema_price:      Rational,
-    /// exponentially moving average confidence interval
-    pub ema_conf:       Rational,
-    /// unix timestamp of aggregate price
-    pub timestamp:      i64,
-    /// min publishers for valid price
-    pub min_pub:        u8,
-    /// space for future derived values
-    pub drv2:           u8,
-    /// space for future derived values
-    pub drv3:           u16,
-    /// space for future derived values
-    pub drv4:           u32,
-    /// product account key
-    pub prod:           Pubkey,
-    /// next Price account in linked list
-    pub next:           Pubkey,
-    /// valid slot of previous update
-    pub prev_slot:      u64,
-    /// aggregate price of previous update with TRADING status
-    pub prev_price:     i64,
-    /// confidence interval of previous update with TRADING status
-    pub prev_conf:      u64,
-    /// unix timestamp of previous aggregate with TRADING status
-    pub prev_timestamp: i64,
-    /// aggregate price info
-    pub agg:            PriceInfo,
-    /// price components one per quoter
-    pub comp:           [PriceComp; 32],
-}
-
-#[cfg(target_endian = "little")]
-unsafe impl Zeroable for PriceAccount {
-}
-
-#[cfg(target_endian = "little")]
-unsafe impl Pod for PriceAccount {
-}
-
-impl PriceAccount {
-    pub fn to_price_feed(&self, price_key: &Pubkey) -> PriceFeed {
-        let mut status = self.agg.status;
-        let mut prev_price = self.prev_price;
-        let mut prev_conf = self.prev_conf;
-        let mut prev_publish_time = self.prev_timestamp;
-
-        if let Ok(clock) = Clock::get() {
-            if matches!(status, PriceStatus::Trading)
-                && clock.slot.saturating_sub(self.agg.pub_slot) > VALID_SLOT_PERIOD
-            {
-                status = PriceStatus::Unknown;
-                prev_price = self.agg.price;
-                prev_conf = self.agg.conf;
-                prev_publish_time = self.timestamp;
+impl PythPriceAccount {
+    pub fn new(data: &mut &[u8], clock: Option<Clock>) -> PythPriceAccount {
+        let price_feed = PriceFeed::deserialize(data).unwrap();
+        let status = price_feed.status;
+        let price = price_feed.get_ema_price().unwrap();
+        let publish_time = price_feed.publish_time;
+        if let Some(clock) = clock {
+            if let Some(diff) = clock.unix_timestamp.checked_sub(publish_time) {
+                let diff_duration = std::time::Duration::from_secs(diff as u64);
+                print!("{:#?}", diff_duration);
             }
         }
-
-        PriceFeed::new(
-            PriceIdentifier::new(price_key.to_bytes()),
+        PythPriceAccount { 
+            feed: price_feed,
             status,
-            self.timestamp,
-            self.expo,
-            self.num,
-            self.num_qt,
-            ProductIdentifier::new(self.prod.to_bytes()),
-            self.agg.price,
-            self.agg.conf,
-            self.ema_price.val,
-            self.ema_conf.val as u64,
-            prev_price,
-            prev_conf,
-            prev_publish_time,
-        )
-    }
-}
-
-fn load<T: Pod>(data: &[u8]) -> Result<&T, PodCastError> {
-    let size = size_of::<T>();
-    if data.len() >= size {
-        Ok(from_bytes(cast_slice::<u8, u8>(try_cast_slice(
-            &data[0..size],
-        )?)))
-    } else {
-        Err(PodCastError::SizeMismatch)
-    }
-}
-
-/// Get a `Mapping` account from the raw byte value of a Solana account.
-pub fn load_mapping_account(data: &[u8]) -> Result<&MappingAccount, PythError> {
-    let pyth_mapping = load::<MappingAccount>(data).map_err(|_| PythError::InvalidAccountData)?;
-
-    if pyth_mapping.magic != MAGIC {
-        return Err(PythError::InvalidAccountData);
-    }
-    if pyth_mapping.ver != VERSION_2 {
-        return Err(PythError::BadVersionNumber);
-    }
-    if pyth_mapping.atype != AccountType::Mapping as u32 {
-        return Err(PythError::WrongAccountType);
-    }
-
-    Ok(pyth_mapping)
-}
-
-/// Get a `Product` account from the raw byte value of a Solana account.
-pub fn load_product_account(data: &[u8]) -> Result<&ProductAccount, PythError> {
-    let pyth_product = load::<ProductAccount>(data).map_err(|_| PythError::InvalidAccountData)?;
-
-    if pyth_product.magic != MAGIC {
-        return Err(PythError::InvalidAccountData);
-    }
-    if pyth_product.ver != VERSION_2 {
-        return Err(PythError::BadVersionNumber);
-    }
-    if pyth_product.atype != AccountType::Product as u32 {
-        return Err(PythError::WrongAccountType);
-    }
-
-    Ok(pyth_product)
-}
-
-/// Get a `Price` account from the raw byte value of a Solana account.
-pub fn load_price_account(data: &[u8]) -> Result<&PriceAccount, PythError> {
-    let pyth_price = load::<PriceAccount>(data).map_err(|_| PythError::InvalidAccountData)?;
-
-    if pyth_price.magic != MAGIC {
-        return Err(PythError::InvalidAccountData);
-    }
-    if pyth_price.ver != VERSION_2 {
-        return Err(PythError::BadVersionNumber);
-    }
-    if pyth_price.atype != AccountType::Price as u32 {
-        return Err(PythError::WrongAccountType);
-    }
-
-    Ok(pyth_price)
-}
-
-pub struct AttributeIter<'a> {
-    attrs: &'a [u8],
-}
-
-impl<'a> Iterator for AttributeIter<'a> {
-    type Item = (&'a str, &'a str);
-
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.attrs.is_empty() {
-            return None;
+            price,
+            publish_time
         }
-        let (key, data) = get_attr_str(self.attrs);
-        let (val, data) = get_attr_str(data);
-        self.attrs = data;
-        Some((key, val))
     }
 }
 
-fn get_attr_str(buf: &[u8]) -> (&str, &[u8]) {
-    if buf.is_empty() {
-        return ("", &[]);
-    }
-    let len = buf[0] as usize;
-    let str = std::str::from_utf8(&buf[1..len + 1]).expect("attr should be ascii or utf-8");
-    let remaining_buf = &buf[len + 1..];
-    (str, remaining_buf)
-}
 
 
 #[cfg(test)]
 mod test {
-    use super::*;
-    use std::{sync::Arc, str::FromStr};
+    use solana_sdk::commitment_config::CommitmentConfig;
     use solana_client::rpc_client::RpcClient;
-    #[test]
-    fn test_pyth_mapping() {
-        let mainnet_mapping = Pubkey::from_str("AHtgzX45WTKfkPG53L6WYhGEXwQkN1BVknET3sVsLL8J").unwrap();
-
-        let rpc = Arc::new(RpcClient::new("https://ssc-dao.genesysgo.net".to_string()));
-        let pyth_mainnet_account_data = rpc.get_account_data(&mainnet_mapping).unwrap();
-        let mapping_account = load_mapping_account(&pyth_mainnet_account_data).unwrap();
-
-        let product_accounts: Vec<ProductAccount> = rpc.get_multiple_accounts(&mapping_account.products()[..]).unwrap().into_iter().filter_map(|acct| {
-            if let Some(prod_acct) = acct { 
-                if let Ok(prod_account) = load_product_account(&prod_acct.data[..])  {
-                    return Some(*prod_account);
-                } else {
-                    return None;
+    use static_pubkey::static_pubkey;
+    pub fn get_clock_account(rpc: &RpcClient, commitment: CommitmentConfig) -> Result<solana_sdk::sysvar::clock::Clock> {
+        use solana_sdk::account_info::IntoAccountInfo;
+        use solana_client::rpc_config::RpcAccountInfoConfig;
+        use solana_account_decoder::UiAccountEncoding;
+        use solana_sdk::sysvar::Sysvar;
+        match rpc.get_multiple_accounts_with_config(
+            &[solana_program::sysvar::clock::id()],
+            RpcAccountInfoConfig {
+                encoding: Some(UiAccountEncoding::Base64),
+                data_slice: None,
+                commitment: Some(commitment),
+                min_context_slot: None,
+            },
+        ) {
+            // this can technically panic
+            Ok(mut response) => match std::mem::take(&mut response.value[0]) {
+                Some(account) => {
+                    let mut clock_tup = (solana_program::sysvar::clock::id(), account);
+                    let clock_acct = clock_tup.into_account_info();
+                    let clock = solana_sdk::sysvar::clock::Clock::from_account_info(&clock_acct)?;
+                    Ok(clock)
                 }
-            }
-            None
-        }).collect();
-
-        println!("{:#?}", product_accounts);
+                None => Err(anyhow!("accounts is None")),
+            },
+            Err(err) => Err(anyhow!("failed to load accounts {:#?}", err)),
+        }
     }
+    
+    
+    
+    use super::*;
+    #[test]
+    fn test_pyth_price_account() {
+        let pyth_feed = static_pubkey!("Gnt27xtC473ZT2Mw5u8wZ68Z3gULkSTb5DuxJy7eJotD");
+        let rpc = RpcClient::new("https://ssc-dao.genesysgo.net".to_string());
+        let price_feed_data = rpc.get_account_data(pubkey).unwrap();
+        let clock = get_clock_account(&rpc, CommitmentConfig::confirmed).unwrap();
+        let price_feed = PythPriceAccount::new(&mut &price_feed_data[..], None);
 
+    }
 }
