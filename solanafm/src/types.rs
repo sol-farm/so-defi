@@ -73,28 +73,34 @@ impl From<Vec<TransferEntry>> for TokenTransferEntries {
 
 impl TokenTransferEntries {
     pub fn filter_by_destination(&self, want: Pubkey) -> Vec<TransferEntry> {
-        self.0.iter().filter_map(|entry| {
-            if let Some(destination) = entry.destination.as_ref() {
-                if want.eq(destination) {
-                    return Some(entry.clone())
-                } else {
-                    return None
+        self.0
+            .iter()
+            .filter_map(|entry| {
+                if let Some(destination) = entry.destination.as_ref() {
+                    if want.eq(destination) {
+                        return Some(entry.clone());
+                    } else {
+                        return None;
+                    }
                 }
-            }
-            None
-        }).collect()
+                None
+            })
+            .collect()
     }
     pub fn filter_by_destination_association(&self, want: Pubkey) -> Vec<TransferEntry> {
-        self.0.iter().filter_map(|entry| {
-            if let Some(destination_association) = entry.destination_association.as_ref() {
-                if want.eq(destination_association) {
-                    return Some(entry.clone())
-                } else {
-                    return None
+        self.0
+            .iter()
+            .filter_map(|entry| {
+                if let Some(destination_association) = entry.destination_association.as_ref() {
+                    if want.eq(destination_association) {
+                        return Some(entry.clone());
+                    } else {
+                        return None;
+                    }
                 }
-            }
-            None
-        }).collect()
+                None
+            })
+            .collect()
     }
 }
 

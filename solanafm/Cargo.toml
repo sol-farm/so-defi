@@ -1,6 +1,6 @@
 [package]
 name = "so-defi-solanafm"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Tulip Protocol"]
 description = "configuration crate for so-defi"

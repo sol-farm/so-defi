@@ -164,7 +164,9 @@ mod test {
 
         let token_transfers = TokenTransferEntries::from(transfers);
 
-        let fee_tokens = token_transfers.filter_by_destination(Pubkey::from_str("HgX4fugaghRMRNtyBdBygsWSFoREphwiSSTaDQSYns7Z").unwrap());
+        let fee_tokens = token_transfers.filter_by_destination(
+            Pubkey::from_str("HgX4fugaghRMRNtyBdBygsWSFoREphwiSSTaDQSYns7Z").unwrap(),
+        );
         assert_eq!(fee_tokens.len(), 3);
     }
     #[test]
