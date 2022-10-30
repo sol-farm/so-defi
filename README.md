@@ -7,6 +7,8 @@ A set of rust crates for working with DeFi protocols across the Solana ecosystem
 * Orca
 * Raydium
 * Atrix
+* Whirlpool
+* SolanaFm (`/transfers`)
 
 # Crates
 
@@ -28,6 +30,10 @@ Provides helpers for parsing the configuration api's available from Orca, and Ra
 
 * Parses the public tokenlist to pull names, and token mints.
 * Useful for brute forcing the name of a market given it's coin/pc constituents
+
+## `so-defi-solanafm`
+
+* Simple crate to fetch `/transfesr` from solanafm's api
 
 # Usage
 

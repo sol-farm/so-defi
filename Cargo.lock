@@ -2674,6 +2674,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "so-defi-solanafm"
+version = "0.1.1"
+dependencies = [
+ "anyhow",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "so-defi-token-list",
+ "solana-program",
+ "thiserror",
+ "tokio",
+]
+
+[[package]]
 name = "so-defi-token-list"
 version = "0.1.1"
 dependencies = [
