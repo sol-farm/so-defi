@@ -54,7 +54,7 @@ pub mod farm {
         use super::farm::*;
         use borsh::BorshDeserialize;
         use solana_client::rpc_client;
-        use solana_program::{self, system_program};
+        use solana_program::{self};
         use static_pubkey::static_pubkey;
         #[test]
         fn test_load_farm_account() {
@@ -145,10 +145,10 @@ pub mod pool {
     mod test {
         use crate::atrix::pool::PoolAccount;
 
-        use super::{farm::*, ProtocolAccount};
+        use super::ProtocolAccount;
         use borsh::BorshDeserialize;
         use solana_client::rpc_client;
-        use solana_program::{self, system_program};
+        use solana_program::{self};
         use static_pubkey::static_pubkey;
         #[test]
         fn test_load_pool_account() {

@@ -8,7 +8,7 @@ use std::collections::HashMap;
 pub const RAYDIUM_API: &str = "https://api.raydium.io/v2";
 
 /// a common type used to denote the raydium api version
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Version {
     pub major: i64,
@@ -140,7 +140,7 @@ pub mod farm_list {
     use super::*;
     pub const RAYDIUM_API_FARM_LIST: &str = "sdk/farm/mainnet.json";
 
-    #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+    #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct FarmList {
         pub name: String,
@@ -148,7 +148,7 @@ pub mod farm_list {
         pub official: Vec<FarmListEntry>,
     }
 
-    #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+    #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct FarmListEntry {
         pub id: String,
@@ -203,7 +203,7 @@ pub mod liquidity_list {
     use super::*;
     pub const RAYDIUM_API_LIQUIDITY_LIST: &str = "sdk/liquidity/mainnet.json";
 
-    #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+    #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct LiquidityList {
         pub name: String,
@@ -212,7 +212,7 @@ pub mod liquidity_list {
         pub un_official: Vec<LiquidityListEntry>,
     }
 
-    #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+    #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct LiquidityListEntry {
         pub id: String,
@@ -321,7 +321,7 @@ pub mod token_list {
         // pub blacklist: Vec<Value>,
     }
 
-    #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+    #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct TokenListEntry {
         pub symbol: String,
@@ -332,7 +332,7 @@ pub mod token_list {
         pub icon: String,
     }
 
-    #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+    #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
     #[serde(rename_all = "camelCase")]
     pub struct Extensions {
         pub coingecko_id: Option<String>,

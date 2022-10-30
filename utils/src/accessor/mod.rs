@@ -82,10 +82,9 @@ pub fn to_u64(bytes: &Vec<u8>) -> u64 {
 
 pub fn to_u32(bytes: &[u8]) -> u32 {
     let mut amount: [u8; 4] = [0_u8; 4];
-    amount.copy_from_slice(&bytes[..]);
+    amount.copy_from_slice(bytes);
     u32::from_le_bytes(amount)
 }
-
 
 pub fn to_pubkey(bytes: &Vec<u8>) -> Pubkey {
     let mut key: [u8; 32] = [0_u8; 32];

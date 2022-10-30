@@ -1,4 +1,3 @@
-use solana_program;
 use solana_program::pubkey::Pubkey;
 use static_pubkey::static_pubkey;
 
