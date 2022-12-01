@@ -131,6 +131,8 @@ mod test {
 
         let pool_conf = configs.pool_by_name("USH-USDC").unwrap();
         assert!(pool_conf.len() >= 1);
+        assert!(pool_conf[0].token_mint_a().to_string().eq("9iLH8T7zoWhY7sBmj1WK9ENbWdS1nL8n9wAxaeRitTa6"));
+        assert!(pool_conf[0].token_mint_b().to_string().eq("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"));
         println!("found pools {}", pool_conf.len());
         let pool_conf =
             pool_by_address(&pool_conf, "ApLVWYdXzjoDhBHeRx6SnbFWv4MYjFMih5FijDQUJk5R").unwrap();
@@ -142,6 +144,8 @@ mod test {
 
         let pool_conf = configs.pool_by_name("SOL-USDC").unwrap();
         assert!(pool_conf.len() >= 1);
+        assert!(pool_conf[0].token_mint_a().to_string().eq("So11111111111111111111111111111111111111112"));
+        assert!(pool_conf[0].token_mint_b().to_string().eq("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"));
         println!("found pools {}", pool_conf.len());
     }
 }
