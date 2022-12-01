@@ -140,12 +140,19 @@ mod test {
             pool_conf.address,
             "ApLVWYdXzjoDhBHeRx6SnbFWv4MYjFMih5FijDQUJk5R".to_string()
         );
+        assert_eq!(pool_conf.formatted_name.as_ref().unwrap(), "USH-USDC-0.0301");
         println!("{:#?}", pool_conf);
 
         let pool_conf = configs.pool_by_name("SOL-USDC").unwrap();
         assert!(pool_conf.len() >= 1);
         assert!(pool_conf[0].token_mint_a().to_string().eq("So11111111111111111111111111111111111111112"));
         assert!(pool_conf[0].token_mint_b().to_string().eq("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"));
+        pool_conf.iter().for_each(|pool_conf| {
+            assert_eq!(
+                pool_conf.formatted_name.as_ref().unwrap(),
+                format!("SOL-USDC-{}", pool_conf.lp_fee_rate + pool_conf.protocol_fee_rate).as_str()
+            );
+        });
         println!("found pools {}", pool_conf.len());
     }
 }
