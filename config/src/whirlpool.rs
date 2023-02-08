@@ -6,7 +6,7 @@ pub const WHIRLPOOL_CONFIGS_API: &str = "https://api.mainnet.orca.so/v1/whirlpoo
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Whirlpools {
-    whirlpools: Vec<Whirlpool>,
+    pub whirlpools: Vec<Whirlpool>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
