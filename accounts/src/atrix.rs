@@ -59,7 +59,7 @@ pub mod farm {
         #[test]
         fn test_load_farm_account() {
             let test_key = static_pubkey!("J55atXt8BnF99YUC4AmpHY2VuxZ6XbBTjL7dHaePid42");
-            let rpc = rpc_client::RpcClient::new("https://ssc-dao.genesysgo.net".to_string());
+            let rpc = rpc_client::RpcClient::new("https://api.mainnet-beta.solana.com".to_string());
             let farm_account_data = rpc.get_account_data(&test_key).unwrap();
             let farm_account = FarmAccount::deserialize(&mut &farm_account_data[..]).unwrap();
             println!("{:#?}", farm_account);
@@ -153,7 +153,7 @@ pub mod pool {
         #[test]
         fn test_load_pool_account() {
             let test_key = static_pubkey!("7yQzTZ9nMpsSePZxgxWpGMK62Zrkr9u7ngEsxyC9j7pG");
-            let rpc = rpc_client::RpcClient::new("https://ssc-dao.genesysgo.net".to_string());
+            let rpc = rpc_client::RpcClient::new("https://api.mainnet-beta.solana.com".to_string());
             let farm_account_data = rpc.get_account_data(&test_key).unwrap();
             let pool_account = PoolAccount::deserialize(&mut &farm_account_data[..]).unwrap();
             assert_eq!(
@@ -164,7 +164,7 @@ pub mod pool {
         #[test]
         fn test_load_protocol_account() {
             let test_key = static_pubkey!("3uTzTX5GBSfbW7eM9R9k95H7Txe32Qw3Z25MtyD2dzwC");
-            let rpc = rpc_client::RpcClient::new("https://ssc-dao.genesysgo.net".to_string());
+            let rpc = rpc_client::RpcClient::new("https://api.mainnet-beta.solana.com".to_string());
             let farm_account_data = rpc.get_account_data(&test_key).unwrap();
             let protocol_account =
                 ProtocolAccount::deserialize(&mut &farm_account_data[..]).unwrap();

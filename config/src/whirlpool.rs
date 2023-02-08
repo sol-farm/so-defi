@@ -21,7 +21,7 @@ pub struct Whirlpool {
     pub lp_fee_rate: f64,
     pub protocol_fee_rate: f64,
     pub whirlpools_config: String,
-    pub modified_time_ms: i64,
+    pub modified_time_ms: Option<i64>,
     /// this field is not included in the response from orca's api
     /// so we include it here as an option to prevent (se|dese)rialization
     /// issues
