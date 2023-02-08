@@ -5,8 +5,8 @@ use std::str::FromStr;
 pub const WHIRLPOOL_CONFIGS_API: &str = "https://api.mainnet.orca.so/v1/whirlpool/list";
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Whirlpools{
-    whirlpools: Vec<Whirlpool>
+pub struct Whirlpools {
+    whirlpools: Vec<Whirlpool>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -66,21 +66,17 @@ impl Whirlpools {
     /// attempts to fill in the missing pool and farm name information using the solana
     /// token list to map coin/pc mints -> names
     pub async fn guess_names(&mut self) -> Result<()> {
-
-
         let guesser =
             so_defi_token_list::market_name_guesser::MarketNameGuesser::initialize().await?;
         for pool in self.whirlpools.iter_mut() {
             match guesser.guess_name(&pool.token_a.mint, &pool.token_b.mint) {
                 Some(info) => {
-
                     pool.name = Some(info.market.clone());
                     pool.formatted_name = Some(format!(
                         "{}-{}",
                         pool.name.as_ref().unwrap(),
                         pool.lp_fee_rate + pool.protocol_fee_rate
                     ));
-
                 }
                 None => {
                     continue;
@@ -131,8 +127,14 @@ mod test {
 
         let pool_conf = configs.pool_by_name("USH-USDC").unwrap();
         assert!(pool_conf.len() >= 1);
-        assert!(pool_conf[0].token_mint_a().to_string().eq("9iLH8T7zoWhY7sBmj1WK9ENbWdS1nL8n9wAxaeRitTa6"));
-        assert!(pool_conf[0].token_mint_b().to_string().eq("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"));
+        assert!(pool_conf[0]
+            .token_mint_a()
+            .to_string()
+            .eq("9iLH8T7zoWhY7sBmj1WK9ENbWdS1nL8n9wAxaeRitTa6"));
+        assert!(pool_conf[0]
+            .token_mint_b()
+            .to_string()
+            .eq("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"));
         println!("found pools {}", pool_conf.len());
         let pool_conf =
             pool_by_address(&pool_conf, "ApLVWYdXzjoDhBHeRx6SnbFWv4MYjFMih5FijDQUJk5R").unwrap();
@@ -140,17 +142,30 @@ mod test {
             pool_conf.address,
             "ApLVWYdXzjoDhBHeRx6SnbFWv4MYjFMih5FijDQUJk5R".to_string()
         );
-        assert_eq!(pool_conf.formatted_name.as_ref().unwrap(), "USH-USDC-0.0301");
+        assert_eq!(
+            pool_conf.formatted_name.as_ref().unwrap(),
+            "USH-USDC-0.0301"
+        );
         println!("{:#?}", pool_conf);
 
         let pool_conf = configs.pool_by_name("SOL-USDC").unwrap();
         assert!(pool_conf.len() >= 1);
-        assert!(pool_conf[0].token_mint_a().to_string().eq("So11111111111111111111111111111111111111112"));
-        assert!(pool_conf[0].token_mint_b().to_string().eq("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"));
+        assert!(pool_conf[0]
+            .token_mint_a()
+            .to_string()
+            .eq("So11111111111111111111111111111111111111112"));
+        assert!(pool_conf[0]
+            .token_mint_b()
+            .to_string()
+            .eq("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"));
         pool_conf.iter().for_each(|pool_conf| {
             assert_eq!(
                 pool_conf.formatted_name.as_ref().unwrap(),
-                format!("SOL-USDC-{}", pool_conf.lp_fee_rate + pool_conf.protocol_fee_rate).as_str()
+                format!(
+                    "SOL-USDC-{}",
+                    pool_conf.lp_fee_rate + pool_conf.protocol_fee_rate
+                )
+                .as_str()
             );
         });
         println!("found pools {}", pool_conf.len());
